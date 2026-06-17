@@ -1,0 +1,53 @@
+<div class="auth-layout fade-in-up">
+  <div class="auth-sidebar">
+    <div style="z-index: 1;">
+      <i class="pi pi-heart-fill text-6xl mb-4 text-white"></i>
+      <h1 class="text-5xl font-outfit font-bold mb-3 mt-0">CareSync</h1>
+      <p class="text-xl line-height-3 text-white-alpha-80 max-w-20rem">
+        The modern hospital management platform designed for healthcare professionals and patients.
+      </p>
+    </div>
+  </div>
+  
+  <div class="auth-content">
+    <div class="auth-card">
+      <div class="auth-header text-center">
+        <div class="logo-container">
+          <i class="pi pi-user text-2xl"></i>
+        </div>
+        <h2 class="auth-title">Welcome Back</h2>
+        <p class="auth-subtitle">Please enter your details to sign in</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-field">
+          <label for="email" class="form-label">Email Address</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-envelope text-muted"></i>
+            <input id="email" type="email" pInputText formControlName="email" placeholder="example@hospital.com" class="w-full" />
+          </span>
+          <small class="p-error block mt-1" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+            <span *ngIf="loginForm.get('email')?.hasError('required')">Email is required.</span>
+            <span *ngIf="loginForm.get('email')?.hasError('email')">Invalid email address.</span>
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="password" class="form-label">Password</label>
+          <p-password id="password" formControlName="password" [feedback]="false" [toggleMask]="true" styleClass="w-full" inputStyleClass="w-full" placeholder="Enter your password"></p-password>
+          <small class="p-error block mt-1" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+            <span *ngIf="loginForm.get('password')?.hasError('required')">Password is required.</span>
+            <span *ngIf="loginForm.get('password')?.hasError('minlength')">Password must be at least 6 characters.</span>
+          </small>
+        </div>
+
+        <p-button label="Sign In" type="submit" [disabled]="loginForm.invalid || loading" [loading]="loading" styleClass="w-full mt-2" size="large"></p-button>
+      </form>
+
+      <div class="auth-footer">
+        <span>Don't have an account? </span>
+        <a routerLink="/register" class="auth-link">Create one now</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,77 @@
+<div>
+  <app-page-header title="Admin Dashboard" subtitle="Real-time stats and metrics of hospital activities"></app-page-header>
+
+  <div *ngIf="loading" class="grid mb-4">
+    <div class="col-12 md:col-6 lg:col-3">
+      <app-skeleton-loader type="card" [count]="4"></app-skeleton-loader>
+    </div>
+  </div>
+
+  <div *ngIf="!loading" class="flex flex-column gap-4 fade-in-up">
+    <!-- Stats Row -->
+    <div class="grid">
+      <!-- Doctor Stat Card -->
+      <div class="col-12 md:col-4">
+        <app-stat-card 
+          title="Total Doctors" 
+          [value]="stats.totalDoctors" 
+          icon="pi pi-briefcase" 
+          colorClass="text-primary" 
+          bgClass="bg-primary-light p-dark:bg-primary-900/20">
+        </app-stat-card>
+      </div>
+
+      <!-- Patient Stat Card -->
+      <div class="col-12 md:col-4">
+        <app-stat-card 
+          title="Total Patients" 
+          [value]="stats.totalPatients" 
+          icon="pi pi-users" 
+          colorClass="text-info" 
+          bgClass="bg-info-light">
+        </app-stat-card>
+      </div>
+
+      <!-- Appointment Stat Card -->
+      <div class="col-12 md:col-4">
+        <app-stat-card 
+          title="Appointments" 
+          [value]="stats.totalAppointments" 
+          icon="pi pi-calendar" 
+          colorClass="text-purple-500" 
+          bgClass="bg-purple-50 p-dark:bg-purple-900/20">
+        </app-stat-card>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid">
+      <!-- Status Chart -->
+      <div class="col-12 lg:col-6">
+        <p-card header="Appointments by Status" styleClass="h-full">
+          <div class="flex align-items-center justify-content-center" style="height: 300px;">
+            <p-chart type="doughnut" [data]="statusChartData" [options]="statusChartOptions" styleClass="w-full h-full"></p-chart>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Growth Chart -->
+      <div class="col-12 lg:col-6">
+        <p-card header="Appointments Growth (Monthly)" styleClass="h-full">
+          <div style="height: 300px;">
+            <p-chart type="line" [data]="monthChartData" [options]="monthChartOptions" styleClass="w-full h-full"></p-chart>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Specialities Chart -->
+      <div class="col-12">
+        <p-card header="Appointments per Speciality (Demand)">
+          <div style="height: 350px;">
+            <p-chart type="bar" [data]="specChartData" [options]="specChartOptions" styleClass="w-full h-full"></p-chart>
+          </div>
+        </p-card>
+      </div>
+    </div>
+  </div>
+</div>

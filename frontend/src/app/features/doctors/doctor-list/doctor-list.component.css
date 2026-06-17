@@ -1,0 +1,37 @@
+.hover-card {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.hover-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.avatar-container {
+  position: relative;
+  display: inline-flex;
+  padding: 4px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #60A5FA 100%);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s ease;
+}
+
+.hover-card:hover .avatar-container {
+  transform: scale(1.05) rotate(3deg);
+}
+
+::ng-deep .hover-card .p-card-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+::ng-deep .hover-card .p-card-content {
+  height: 100%;
+  margin: 0 !important;
+}

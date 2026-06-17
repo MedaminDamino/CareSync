@@ -1,0 +1,48 @@
+<!-- Card Skeleton -->
+<ng-container *ngIf="type === 'card'">
+  <div *ngFor="let _ of countArray" class="skeleton-card mb-4 border-round-xl p-4 surface-card border-1 border-surface w-full">
+    <div class="flex align-items-center mb-4">
+      <div class="skeleton-circle w-3rem h-3rem border-circle mr-3"></div>
+      <div class="flex-1">
+        <div class="skeleton-line h-1rem w-6 mb-2 border-round"></div>
+        <div class="skeleton-line h-0.5rem w-4 border-round"></div>
+      </div>
+    </div>
+    <div class="skeleton-line h-1rem w-full mb-2 border-round"></div>
+    <div class="skeleton-line h-1rem w-10 mb-2 border-round"></div>
+    <div class="skeleton-line h-1rem w-8 mb-4 border-round"></div>
+    <div class="flex justify-content-end">
+      <div class="skeleton-line h-2rem w-6rem border-round-md"></div>
+    </div>
+  </div>
+</ng-container>
+
+<!-- Table Skeleton -->
+<ng-container *ngIf="type === 'table'">
+  <div class="surface-card border-round-xl border-1 border-surface overflow-hidden">
+    <!-- Table Header -->
+    <div class="flex px-4 py-3 border-bottom-1 border-surface bg-main">
+      <div class="skeleton-line h-1rem w-2 mr-4 border-round"></div>
+      <div class="skeleton-line h-1rem w-3 mr-4 border-round"></div>
+      <div class="skeleton-line h-1rem w-2 mr-4 border-round"></div>
+      <div class="skeleton-line h-1rem w-2 mr-4 border-round"></div>
+      <div class="skeleton-line h-1rem w-2 border-round"></div>
+    </div>
+    <!-- Table Body -->
+    <div *ngFor="let _ of countArray; let last = last" class="flex px-4 py-3 align-items-center" [ngClass]="{'border-bottom-1 border-surface': !last}">
+      <div class="skeleton-line h-1rem w-2 mr-4 border-round"></div>
+      <div class="skeleton-line h-1rem w-3 mr-4 border-round"></div>
+      <div class="skeleton-line h-1rem w-2 mr-4 border-round"></div>
+      <div class="skeleton-line h-1.5rem w-4rem mr-4 border-round-xl"></div>
+      <div class="flex gap-2 w-2">
+        <div class="skeleton-circle w-2rem h-2rem border-circle"></div>
+        <div class="skeleton-circle w-2rem h-2rem border-circle"></div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<!-- Text Skeleton -->
+<ng-container *ngIf="type === 'text'">
+  <div *ngFor="let _ of countArray" class="skeleton-line h-1rem w-full mb-2 border-round"></div>
+</ng-container>

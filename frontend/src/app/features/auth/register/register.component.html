@@ -1,0 +1,98 @@
+<div class="auth-layout fade-in-up">
+  <div class="auth-sidebar">
+    <div style="z-index: 1;">
+      <i class="pi pi-heart-fill text-6xl mb-4 text-white"></i>
+      <h1 class="text-5xl font-outfit font-bold mb-3 mt-0">CareSync</h1>
+      <p class="text-xl line-height-3 text-white-alpha-80 max-w-20rem">
+        Join our network of healthcare professionals and patients to manage your medical journey.
+      </p>
+    </div>
+  </div>
+  
+  <div class="auth-content">
+    <div class="auth-card" style="max-width: 500px;">
+      <div class="auth-header text-center">
+        <div class="logo-container">
+          <i class="pi pi-user-plus text-2xl"></i>
+        </div>
+        <h2 class="auth-title">Create an Account</h2>
+        <p class="auth-subtitle">Register to start managing appointments</p>
+      </div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="form-field">
+          <label for="name" class="form-label">Full Name</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-user text-muted"></i>
+            <input id="name" type="text" pInputText formControlName="name" placeholder="John Doe" class="w-full" />
+          </span>
+          <small class="p-error block mt-1" *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.hasError('required')">
+            Full name is required.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="email" class="form-label">Email Address</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-envelope text-muted"></i>
+            <input id="email" type="email" pInputText formControlName="email" placeholder="example@hospital.com" class="w-full" />
+          </span>
+          <small class="p-error block mt-1" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+            <span *ngIf="registerForm.get('email')?.hasError('required')">Email is required.</span>
+            <span *ngIf="registerForm.get('email')?.hasError('email')">Invalid email address.</span>
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="phone" class="form-label">Phone Number</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-phone text-muted"></i>
+            <input id="phone" type="text" pInputText formControlName="phone" placeholder="555-0199" class="w-full" />
+          </span>
+          <small class="p-error block mt-1" *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.hasError('required')">
+            Phone number is required.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="password" class="form-label">Password</label>
+          <p-password id="password" formControlName="password" [feedback]="false" [toggleMask]="true" styleClass="w-full" inputStyleClass="w-full" placeholder="Enter password (min 6 chars)"></p-password>
+          <small class="p-error block mt-1" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+            <span *ngIf="registerForm.get('password')?.hasError('required')">Password is required.</span>
+            <span *ngIf="registerForm.get('password')?.hasError('minlength')">Password must be at least 6 characters.</span>
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="role" class="form-label">Account Type</label>
+          <p-select id="role" [options]="roleOptions" formControlName="role" optionLabel="label" optionValue="value" styleClass="w-full"></p-select>
+        </div>
+
+        <!-- Patient specific: Date of Birth -->
+        <div class="form-field" *ngIf="showPatientFields">
+          <label for="dateOfBirth" class="form-label">Date of Birth</label>
+          <p-datepicker id="dateOfBirth" formControlName="dateOfBirth" dateFormat="yy-mm-dd" [maxDate]="today" [showIcon]="true" placeholder="Select date of birth"></p-datepicker>
+          <small class="p-error block mt-1" *ngIf="registerForm.get('dateOfBirth')?.touched && registerForm.get('dateOfBirth')?.hasError('required')">
+            Date of birth is required.
+          </small>
+        </div>
+
+        <!-- Doctor specific: Speciality -->
+        <div class="form-field" *ngIf="showDoctorFields">
+          <label for="specialityId" class="form-label">Speciality</label>
+          <p-select id="specialityId" [options]="specialities" formControlName="specialityId" optionLabel="name" optionValue="id" placeholder="Select your speciality" styleClass="w-full"></p-select>
+          <small class="p-error block mt-1" *ngIf="registerForm.get('specialityId')?.touched && registerForm.get('specialityId')?.hasError('required')">
+            Speciality is required.
+          </small>
+        </div>
+
+        <p-button label="Register" type="submit" [disabled]="registerForm.invalid || loading" [loading]="loading" styleClass="w-full mt-2" size="large"></p-button>
+      </form>
+
+      <div class="auth-footer">
+        <span>Already have an account? </span>
+        <a routerLink="/login" class="auth-link">Log in here</a>
+      </div>
+    </div>
+  </div>
+</div>

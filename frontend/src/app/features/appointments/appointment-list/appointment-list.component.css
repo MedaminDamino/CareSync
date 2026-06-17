@@ -1,0 +1,169 @@
+.appointment-page {
+  padding: 24px;
+  min-height: 100%;
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: 28px;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-title .pi {
+  color: #667eea;
+}
+
+.page-subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Table Card */
+.table-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* Table Caption */
+.table-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.caption-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.caption-title .pi {
+  color: #667eea;
+}
+
+.search-input {
+  border-radius: 8px !important;
+  font-size: 0.875rem !important;
+}
+
+/* Table Header */
+.th-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #475569;
+}
+
+.th-content .pi {
+  color: #667eea;
+  font-size: 0.85rem;
+}
+
+/* Cell Styles */
+.cell-with-avatar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cell-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.patient-avatar {
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+.doctor-avatar {
+  background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+.speciality-chip {
+  font-size: 0.75rem !important;
+}
+
+.date-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+.date-icon {
+  color: #667eea;
+  font-size: 0.85rem;
+}
+
+.status-tag {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+}
+
+/* Action Buttons */
+.action-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: #94a3b8;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: #cbd5e1;
+}
+
+.empty-state h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #64748b;
+  margin: 0;
+}
+
+.empty-state p {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin: 0;
+}

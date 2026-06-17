@@ -1,0 +1,42 @@
+<div>
+  <app-page-header title="Doctor Dashboard" subtitle="Manage your daily appointments and schedule"></app-page-header>
+
+  <app-loading-state *ngIf="loading"></app-loading-state>
+
+  <div *ngIf="!loading" class="fade-in-up">
+    <p-card header="Upcoming Appointments">
+      <app-empty-state *ngIf="appointments.length === 0" message="No appointments found" description="You have no appointments assigned to you yet." icon="pi pi-calendar-times"></app-empty-state>
+
+      <p-table *ngIf="appointments.length > 0" [value]="appointments" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-striped">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Patient Name</th>
+            <th>Date & Time</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-apt>
+          <tr>
+            <td class="font-medium text-main">{{ apt.patientName }}</td>
+            <td class="text-muted">{{ apt.appointmentDate | date:'medium' }}</td>
+            <td class="text-muted max-w-15rem text-overflow-ellipsis overflow-hidden white-space-nowrap" [pTooltip]="apt.reason">{{ apt.reason }}</td>
+            <td>
+              <app-status-tag [status]="apt.status"></app-status-tag>
+            </td>
+            <td>
+              <div class="flex gap-2" *ngIf="apt.status === 'PENDING'">
+                <p-button icon="pi pi-check" styleClass="p-button-rounded p-button-primary p-button-text p-button-sm" (onClick)="updateStatus(apt.id, 'ACCEPTED')" pTooltip="Accept"></p-button>
+                <p-button icon="pi pi-times" styleClass="p-button-rounded p-button-danger p-button-text p-button-sm" (onClick)="updateStatus(apt.id, 'REJECTED')" pTooltip="Reject"></p-button>
+              </div>
+              <div class="flex gap-2" *ngIf="apt.status === 'ACCEPTED'">
+                <p-button icon="pi pi-check-square" styleClass="p-button-rounded p-button-info p-button-text p-button-sm" (onClick)="updateStatus(apt.id, 'COMPLETED')" pTooltip="Mark Completed"></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+</div>

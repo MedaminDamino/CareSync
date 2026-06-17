@@ -1,0 +1,77 @@
+<div class="fade-in-up">
+  <app-page-header title="Specialities" subtitle="Manage and define medical specialities and divisions">
+    <div actions>
+      <p-button label="Add Speciality" icon="pi pi-plus" (click)="openDialog()" styleClass="p-button-primary"></p-button>
+    </div>
+  </app-page-header>
+
+  <!-- Action Toolbar with Search -->
+  <app-action-toolbar>
+    <div filters class="flex flex-column sm:flex-row gap-3 w-full">
+      <app-search-bar 
+        placeholder="Search specialities..." 
+        [searchValue]="searchQuery" 
+        (search)="onSearch($event)" 
+        class="w-full md:w-24rem">
+      </app-search-bar>
+    </div>
+  </app-action-toolbar>
+
+  <div *ngIf="loading" class="mb-4">
+    <app-skeleton-loader type="table" [count]="5"></app-skeleton-loader>
+  </div>
+
+  <div *ngIf="!loading">
+    <p-card>
+      <app-empty-state 
+        *ngIf="filteredSpecialities.length === 0" 
+        message="No specialities found" 
+        description="There are no specialities matching the criteria." 
+        icon="pi pi-list">
+      </app-empty-state>
+
+      <p-table *ngIf="filteredSpecialities.length > 0" [value]="filteredSpecialities" responsiveLayout="scroll" styleClass="p-datatable-striped">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Speciality Name</th>
+            <th>Description</th>
+            <th style="width: 120px;">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-speciality>
+          <tr>
+            <td class="font-semibold text-main">{{ speciality.name }}</td>
+            <td class="text-muted">{{ speciality.description || 'No description provided' }}</td>
+            <td>
+              <div class="flex gap-2">
+                <p-button icon="pi pi-pencil" styleClass="p-button-rounded p-button-text p-button-info" (click)="openDialog(speciality)" pTooltip="Edit Speciality"></p-button>
+                <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-text p-button-danger" (click)="deleteSpeciality(speciality.id)" pTooltip="Delete Speciality"></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+
+  <!-- Speciality Dialog Form -->
+  <p-dialog [(visible)]="displayDialog" [header]="isEdit ? 'Edit Speciality' : 'Add Speciality'" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" [resizable]="false" styleClass="p-fluid">
+    <form [formGroup]="specForm" (ngSubmit)="saveSpeciality()" class="flex flex-column gap-3 mt-2">
+      <div class="flex flex-column gap-2">
+        <label for="name" class="font-medium text-main">Speciality Name</label>
+        <input id="name" type="text" pInputText formControlName="name" placeholder="e.g. Cardiology" />
+        <small class="p-error" *ngIf="specForm.get('name')?.touched && specForm.get('name')?.hasError('required')">Speciality name is required.</small>
+      </div>
+
+      <div class="flex flex-column gap-2">
+        <label for="description" class="font-medium text-main">Description</label>
+        <textarea id="description" pInputTextarea formControlName="description" rows="3" placeholder="Brief description of the speciality..." class="p-inputtext"></textarea>
+      </div>
+
+      <div class="flex justify-content-end gap-2 mt-4 border-top-1 border-surface pt-3">
+        <p-button label="Cancel" icon="pi pi-times" [outlined]="true" severity="secondary" (click)="displayDialog = false" type="button"></p-button>
+        <p-button label="Save" icon="pi pi-check" [disabled]="specForm.invalid || saving" [loading]="saving" type="submit"></p-button>
+      </div>
+    </form>
+  </p-dialog>
+</div>

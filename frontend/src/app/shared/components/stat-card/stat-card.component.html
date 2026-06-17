@@ -1,0 +1,11 @@
+<p-card styleClass="h-full">
+  <div class="flex align-items-center justify-content-between p-2">
+    <div class="flex flex-column gap-2">
+      <span class="text-muted font-medium">{{ title }}</span>
+      <span class="text-3xl font-bold text-main font-outfit">{{ value }}</span>
+    </div>
+    <div class="flex align-items-center justify-content-center w-4rem h-4rem border-circle" [ngClass]="[bgClass, colorClass]">
+      <i class="text-2xl" [ngClass]="icon"></i>
+    </div>
+  </div>
+</p-card>

@@ -1,0 +1,115 @@
+<div class="app-layout">
+  <!-- Sidenav -->
+  <aside class="sidenav">
+    <div class="brand">
+      <i class="pi pi-heart-fill brand-icon"></i>
+      <span class="brand-name">CareSync</span>
+    </div>
+
+    <!-- Nav links -->
+    <nav class="nav-links">
+      <ul>
+        <!-- Admin Menu -->
+        <ng-container *ngIf="isAdmin">
+          <li>
+            <a routerLink="/dashboard/admin" routerLinkActive="active-link">
+              <i class="pi pi-th-large"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/specialities" routerLinkActive="active-link">
+              <i class="pi pi-list"></i>
+              <span>Specialities</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/doctors" routerLinkActive="active-link">
+              <i class="pi pi-briefcase"></i>
+              <span>Doctors</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/patients" routerLinkActive="active-link">
+              <i class="pi pi-users"></i>
+              <span>Patients</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/appointments" routerLinkActive="active-link">
+              <i class="pi pi-calendar"></i>
+              <span>Appointments</span>
+            </a>
+          </li>
+        </ng-container>
+
+        <!-- Doctor Menu -->
+        <ng-container *ngIf="isDoctor">
+          <li>
+            <a routerLink="/dashboard/doctor" routerLinkActive="active-link">
+              <i class="pi pi-th-large"></i>
+              <span>My Dashboard</span>
+            </a>
+          </li>
+        </ng-container>
+
+        <!-- Patient Menu -->
+        <ng-container *ngIf="isPatient">
+          <li>
+            <a routerLink="/dashboard/patient" routerLinkActive="active-link">
+              <i class="pi pi-th-large"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/doctors" routerLinkActive="active-link">
+              <i class="pi pi-search"></i>
+              <span>Find Doctors</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/appointments/my" routerLinkActive="active-link">
+              <i class="pi pi-calendar"></i>
+              <span>My Appointments</span>
+            </a>
+          </li>
+        </ng-container>
+      </ul>
+    </nav>
+
+    <!-- User Profile Footer -->
+    <div class="user-footer" *ngIf="currentUser">
+      <div class="user-avatar">
+        {{ currentUser.email.charAt(0).toUpperCase() }}
+      </div>
+      <div class="user-details">
+        <span class="user-email" [pTooltip]="currentUser.email" tooltipPosition="top">{{ currentUser.email }}</span>
+        <span class="role-badge" [ngClass]="currentUser.role.toLowerCase()">{{ currentUser.role }}</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Navbar -->
+    <header class="navbar">
+      <span class="navbar-title">CareSync Hospital System</span>
+      <div class="spacer"></div>
+      <div class="navbar-actions">
+        <app-theme-toggle></app-theme-toggle>
+        <p-button 
+          icon="pi pi-sign-out" 
+          styleClass="p-button-rounded p-button-text p-button-plain logout-btn" 
+          (click)="logout()" 
+          pTooltip="Logout" 
+          tooltipPosition="bottom"
+        ></p-button>
+      </div>
+    </header>
+
+    <!-- Page Container -->
+    <main class="page-container">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

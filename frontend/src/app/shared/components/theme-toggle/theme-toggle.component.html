@@ -1,0 +1,9 @@
+<p-button 
+  [icon]="isDark ? 'pi pi-moon' : 'pi pi-sun'" 
+  [rounded]="true" 
+  [text]="true" 
+  [severity]="isDark ? 'secondary' : 'help'"
+  (onClick)="toggle()"
+  [pTooltip]="isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+  tooltipPosition="bottom">
+</p-button>

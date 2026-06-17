@@ -1,0 +1,104 @@
+<div class="fade-in-up">
+  <app-page-header title="Patient Directory" subtitle="Manage and view registered patients in the system">
+    <div actions>
+      <p-button label="Add Patient" icon="pi pi-user-plus" (click)="openPatientDialog()" styleClass="p-button-primary"></p-button>
+    </div>
+  </app-page-header>
+
+  <!-- Action Toolbar with Search -->
+  <app-action-toolbar>
+    <div filters class="flex flex-column sm:flex-row gap-3 w-full">
+      <app-search-bar 
+        placeholder="Search patients by name, email or phone..." 
+        [searchValue]="searchQuery" 
+        (search)="onSearch($event)" 
+        class="w-full md:w-24rem">
+      </app-search-bar>
+    </div>
+  </app-action-toolbar>
+
+  <div *ngIf="loading" class="mb-4">
+    <app-skeleton-loader type="table" [count]="5"></app-skeleton-loader>
+  </div>
+
+  <div *ngIf="!loading">
+    <p-card>
+      <app-empty-state 
+        *ngIf="filteredPatients.length === 0" 
+        message="No patients found" 
+        description="There are no patients matching the search criteria." 
+        icon="pi pi-users">
+      </app-empty-state>
+
+      <p-table *ngIf="filteredPatients.length > 0" [value]="filteredPatients" [paginator]="true" [rows]="10" responsiveLayout="scroll" styleClass="p-datatable-striped">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Patient Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Date of Birth</th>
+            <th style="width: 120px;">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-patient>
+          <tr>
+            <td class="font-semibold text-main">
+              <div class="flex align-items-center gap-3">
+                <p-avatar [label]="patient.name.charAt(0)" shape="circle" styleClass="bg-primary text-white"></p-avatar>
+                <span>{{ patient.name }}</span>
+              </div>
+            </td>
+            <td class="text-muted">{{ patient.email }}</td>
+            <td class="text-muted">{{ patient.phone }}</td>
+            <td class="text-muted">{{ patient.dateOfBirth | date:'longDate' }}</td>
+            <td>
+              <div class="flex gap-2">
+                <p-button icon="pi pi-pencil" styleClass="p-button-rounded p-button-text p-button-info" (click)="openPatientDialog(patient)" pTooltip="Edit Patient"></p-button>
+                <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-text p-button-danger" (click)="deletePatient(patient.id)" pTooltip="Delete Patient"></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+
+  <!-- Patient Dialog Form -->
+  <p-dialog [(visible)]="displayDialog" [header]="isEdit ? 'Edit Patient Profile' : 'Register New Patient'" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" [resizable]="false" styleClass="p-fluid">
+    <form [formGroup]="patForm" (ngSubmit)="savePatient()" class="flex flex-column gap-3 mt-2">
+      <div class="flex flex-column gap-2">
+        <label for="name" class="font-medium text-main">Full Name</label>
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-user text-muted"></i>
+          <input id="name" type="text" pInputText formControlName="name" placeholder="Jane Doe" />
+        </span>
+      </div>
+
+      <div class="flex flex-column gap-2">
+        <label for="email" class="font-medium text-main">Email Address</label>
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-envelope text-muted"></i>
+          <input id="email" type="email" pInputText formControlName="email" placeholder="patient@hospital.com" />
+        </span>
+      </div>
+
+      <div class="flex flex-column gap-2">
+        <label for="phone" class="font-medium text-main">Phone Number</label>
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-phone text-muted"></i>
+          <input id="phone" type="text" pInputText formControlName="phone" placeholder="555-0199" />
+        </span>
+      </div>
+
+      <div class="flex flex-column gap-2">
+        <label for="dateOfBirth" class="font-medium text-main">Date of Birth</label>
+        <p-datepicker id="dateOfBirth" formControlName="dateOfBirth" dateFormat="yy-mm-dd" [maxDate]="today" [showIcon]="true" placeholder="Select date of birth"></p-datepicker>
+      </div>
+
+      <div class="flex justify-content-end gap-2 mt-4 border-top-1 border-surface pt-3">
+        <p-button label="Cancel" icon="pi pi-times" [outlined]="true" severity="secondary" (click)="displayDialog = false" type="button"></p-button>
+        <p-button label="Save" icon="pi pi-check" [disabled]="patForm.invalid || saving" [loading]="saving" type="submit"></p-button>
+      </div>
+    </form>
+  </p-dialog>
+</div>
