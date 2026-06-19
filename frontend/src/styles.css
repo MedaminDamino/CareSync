@@ -465,3 +465,81 @@ p, span, td, th, label {
   color: var(--primary-hover);
   text-decoration: underline;
 }
+
+/* Paginator overrides to match blue branding and fix night mode contrast */
+.p-paginator {
+  background: var(--card-bg) !important;
+  border-top: 1px solid var(--border-color) !important;
+  padding: 0.75rem 1rem !important;
+  border-bottom-left-radius: var(--radius-xl) !important;
+  border-bottom-right-radius: var(--radius-xl) !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page {
+  color: var(--text-muted) !important;
+  border-radius: var(--radius-md) !important;
+  min-width: 2.25rem !important;
+  height: 2.25rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: var(--primary-color) !important;
+  color: #ffffff !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page:not(.p-highlight):hover {
+  background: var(--border-light) !important;
+  color: var(--text-main) !important;
+}
+
+.p-paginator .p-paginator-first, 
+.p-paginator .p-paginator-prev, 
+.p-paginator .p-paginator-next, 
+.p-paginator .p-paginator-last {
+  color: var(--text-muted) !important;
+  border-radius: var(--radius-md) !important;
+  min-width: 2.25rem !important;
+  height: 2.25rem !important;
+}
+
+.p-paginator .p-paginator-first:hover, 
+.p-paginator .p-paginator-prev:hover, 
+.p-paginator .p-paginator-next:hover, 
+.p-paginator .p-paginator-last:hover {
+  background: var(--border-light) !important;
+  color: var(--text-main) !important;
+}
+
+.p-paginator .p-paginator-first:disabled, 
+.p-paginator .p-paginator-prev:disabled, 
+.p-paginator .p-paginator-next:disabled, 
+.p-paginator .p-paginator-last:disabled {
+  opacity: 0.4 !important;
+}
+
+/* PrimeNG Global Brand Blue Overrides for dynamic elements */
+.p-select-option.p-highlight {
+  background: var(--primary-light) !important;
+  color: var(--primary-color) !important;
+}
+
+.p-checkbox-checked .p-checkbox-box {
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.p-radiobutton-checked .p-radiobutton-box {
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.p-datepicker-today .p-datepicker-date {
+  border-color: var(--primary-color) !important;
+}
+
+.p-datepicker-active .p-datepicker-date {
+  background: var(--primary-color) !important;
+  color: #ffffff !important;
+}
+

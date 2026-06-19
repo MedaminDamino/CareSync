@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedPrimeNgModule } from '../../../shared/primeng.module';
 import { DashboardService } from '../../../core/services/dashboard.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { StatCardComponent } from '../../../shared/components/stat-card/stat-card.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -12,13 +14,14 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboardComponent implements OnInit, OnDestroy {
   stats: any = {
     totalDoctors: 0,
     totalPatients: 0,
     totalAppointments: 0
   };
   loading = true;
+  private themeSubscription!: Subscription;
 
   public statusChartType = 'doughnut';
   public statusChartData: any = {
@@ -29,13 +32,7 @@ export class AdminDashboardComponent implements OnInit {
       hoverOffset: 4
     }]
   };
-  public statusChartOptions: any = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'bottom' }
-    }
-  };
+  public statusChartOptions: any = {};
 
   public monthChartType = 'line';
   public monthChartData: any = {
@@ -44,18 +41,12 @@ export class AdminDashboardComponent implements OnInit {
       data: [],
       label: 'Appointments',
       borderColor: '#2563eb',
-      backgroundColor: 'rgba(37, 99, 235, 0.1)',
+      backgroundColor: 'rgba(37, 99, 235, 0.15)',
       fill: true,
       tension: 0.3
     }]
   };
-  public monthChartOptions: any = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: { beginAtZero: true, ticks: { stepSize: 1 } }
-    }
-  };
+  public monthChartOptions: any = {};
 
   public specChartType = 'bar';
   public specChartData: any = {
@@ -67,18 +58,93 @@ export class AdminDashboardComponent implements OnInit {
       borderRadius: 6
     }]
   };
-  public specChartOptions: any = {
-    responsive: true,
-    maintainAspectRatio: false,
-    indexAxis: 'y',
-    scales: {
-      x: { beginAtZero: true, ticks: { stepSize: 1 } }
-    }
-  };
+  public specChartOptions: any = {};
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(
+    private dashboardService: DashboardService,
+    private themeService: ThemeService
+  ) {}
+
+  updateChartOptions(isDark: boolean): void {
+    const textColor = isDark ? '#cbd5e1' : '#64748b';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)';
+
+    this.statusChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: textColor,
+            font: { family: 'Inter', size: 12 }
+          }
+        }
+      }
+    };
+
+    this.monthChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: {
+            color: textColor,
+            font: { family: 'Inter', size: 12 }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { family: 'Inter', size: 11 } }
+        },
+        y: {
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { family: 'Inter', size: 11 }, stepSize: 1 },
+          beginAtZero: true
+        }
+      }
+    };
+
+    this.specChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: {
+        legend: {
+          labels: {
+            color: textColor,
+            font: { family: 'Inter', size: 12 }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { family: 'Inter', size: 11 }, stepSize: 1 },
+          beginAtZero: true
+        },
+        y: {
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { family: 'Inter', size: 11 } }
+        }
+      }
+    };
+  }
+
+  ngOnDestroy(): void {
+    if (this.themeSubscription) {
+      this.themeSubscription.unsubscribe();
+    }
+  }
+
 
   ngOnInit(): void {
+    this.themeSubscription = this.themeService.isDarkMode$.subscribe(isDark => {
+      this.updateChartOptions(isDark);
+    });
+
     this.dashboardService.getStats().subscribe({
       next: (data) => {
         this.stats = data;
