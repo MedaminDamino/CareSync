@@ -35,3 +35,210 @@
   height: 100%;
   margin: 0 !important;
 }
+
+/* Status dot on avatar */
+.doc-status-dot {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.dot-active { background: #10b981; }
+.dot-blocked { background: #ef4444; }
+
+/* Doctor banner in booking modal */
+.doctor-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--primary-50, #eff6ff);
+  border: 1px solid var(--primary-100, #dbeafe);
+}
+
+.doctor-banner-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0 0 2px;
+}
+
+.doctor-banner-spec {
+  font-size: 0.82rem;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* ========== Status Badges ========== */
+.user-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.status-active { background: #d1fae5; color: #065f46; }
+.status-blocked { background: #fee2e2; color: #991b1b; }
+.status-suspended { background: #fef3c7; color: #92400e; }
+
+/* ========== Form Layout ========== */
+.form-section { margin-bottom: 28px; }
+.form-section:last-child { margin-bottom: 0; }
+
+.form-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--surface-border, #e2e8f0);
+}
+
+.form-section-icon { color: var(--primary-color); font-size: 0.9rem; }
+.form-section-title { font-size: 0.9rem; font-weight: 700; color: var(--text-color); margin: 0; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+.form-field { display: flex; flex-direction: column; gap: 6px; }
+.form-field-full { grid-column: 1 / -1; }
+.field-label { font-size: 0.85rem; font-weight: 600; color: var(--text-color); }
+.field-desc { font-size: 0.78rem; color: var(--text-color-secondary); margin: 0; }
+.required-mark { color: #ef4444; margin-left: 2px; }
+
+/* ========== Drawer Sections ========== */
+.drawer-section { margin-bottom: 20px; }
+.drawer-section-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-color-secondary); margin: 0 0 14px; }
+.drawer-field-list { display: flex; flex-direction: column; gap: 12px; }
+.drawer-field { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.drawer-field-label { font-size: 0.82rem; color: var(--text-color-secondary); font-weight: 500; flex-shrink: 0; }
+.drawer-field-value { font-size: 0.85rem; color: var(--text-color); font-weight: 600; text-align: right; }
+.drawer-divider { height: 1px; background: var(--surface-border, #e2e8f0); margin: 20px 0; }
+
+/* Redesigned Booking Modal Styles */
+.booking-hero-section {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.04) 0%, rgba(37, 99, 235, 0.08) 100%);
+  border-bottom: 1px solid var(--surface-border, #e2e8f0);
+  padding: 24px 28px;
+  margin: 0;
+}
+
+.booking-hero-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+::ng-deep .booking-avatar-large {
+  width: 64px !important;
+  height: 64px !important;
+  background-color: var(--primary-color) !important;
+  color: #ffffff !important;
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
+}
+
+.booking-doctor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.booking-doctor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.booking-doctor-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.availability-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+.availability-badge.available-today {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.booking-doctor-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-color-secondary);
+}
+
+.meta-divider {
+  color: var(--surface-border, #e2e8f0);
+}
+
+.booking-doctor-spec {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.booking-doctor-exp {
+  display: flex;
+  align-items: center;
+}
+
+.booking-doctor-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+}
+
+.rating-star {
+  color: #eab308;
+}
+
+.rating-val {
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.rating-count {
+  color: var(--text-color-secondary);
+}
+
+.booking-body-form {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+

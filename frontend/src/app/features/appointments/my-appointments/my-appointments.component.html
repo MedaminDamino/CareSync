@@ -1,7 +1,7 @@
 <div class="fade-in-up">
   <app-page-header title="My Appointment History" subtitle="View and manage all your past and upcoming appointments">
     <div actions>
-      <p-button label="Book New Appointment" icon="pi pi-calendar-plus" routerLink="/appointments/book" styleClass="p-button-primary"></p-button>
+      <p-button label="Book New Appointment" icon="pi pi-calendar-plus" routerLink="/doctors" styleClass="p-button-primary"></p-button>
     </div>
   </app-page-header>
 
@@ -65,8 +65,19 @@
               <p class="m-0 text-sm text-main line-height-3">{{ apt.reason }}</p>
             </div>
 
-            <div class="mt-auto pt-3 border-top-1 border-surface" *ngIf="apt.status === 'PENDING' || apt.status === 'ACCEPTED'">
+            <div class="mt-auto pt-3 border-top-1 border-surface" *ngIf="apt.status === 'PENDING'">
               <p-button label="Cancel Appointment" icon="pi pi-times" styleClass="p-button-outlined p-button-danger w-full" (onClick)="cancelAppointment(apt.id)"></p-button>
+            </div>
+
+            <div class="mt-auto pt-3 border-top-1 border-surface" *ngIf="apt.status === 'ACCEPTED'">
+              <p-button
+                label="Cancellation Unavailable"
+                icon="pi pi-lock"
+                styleClass="p-button-outlined p-button-secondary w-full"
+                [disabled]="true"
+                pTooltip="This appointment has been accepted by the doctor and can no longer be cancelled."
+                tooltipPosition="top">
+              </p-button>
             </div>
           </ng-template>
         </p-card>

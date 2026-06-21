@@ -9,8 +9,8 @@ import { SharedPrimeNgModule } from '../../primeng.module';
   imports: [CommonModule, FormsModule, SharedPrimeNgModule],
   template: `
     <div class="search-bar-container">
-      <span class="p-input-icon-left w-full">
-        <i class="pi pi-search search-icon text-muted"></i>
+      <p-iconfield class="w-full">
+        <p-inputicon class="pi pi-search text-muted"></p-inputicon>
         <input 
           type="text" 
           pInputText 
@@ -19,7 +19,7 @@ import { SharedPrimeNgModule } from '../../primeng.module';
           (ngModelChange)="onSearchChange($event)"
           class="w-full search-input"
         />
-      </span>
+      </p-iconfield>
     </div>
   `,
   styles: [`
@@ -27,13 +27,9 @@ import { SharedPrimeNgModule } from '../../primeng.module';
       width: 100%;
     }
     .search-input {
-      padding-left: 2.5rem !important;
       border-radius: var(--radius-md) !important;
       font-size: 14px !important;
-    }
-    .search-icon {
-      left: 0.85rem !important;
-      margin-top: -8px !important;
+      padding-left: 2.5rem !important;
     }
   `]
 })

@@ -1,7 +1,7 @@
 <div>
   <app-page-header title="Patient Dashboard" subtitle="Manage your appointments and healthcare journey">
     <div actions>
-      <p-button label="Book Appointment" icon="pi pi-plus" routerLink="/appointments/book" styleClass="p-button-primary"></p-button>
+      <p-button label="Book Appointment" icon="pi pi-plus" routerLink="/doctors" styleClass="p-button-primary"></p-button>
     </div>
   </app-page-header>
 
@@ -48,7 +48,7 @@
     <p-card header="Recent Appointments">
       <app-empty-state *ngIf="appointments.length === 0" message="No appointments booked" description="You haven't booked any appointments yet. Click 'Book Appointment' to get started." icon="pi pi-calendar-plus">
         <div actions>
-          <p-button label="Book Now" icon="pi pi-calendar" routerLink="/appointments/book" styleClass="p-button-outlined"></p-button>
+          <p-button label="Book Now" icon="pi pi-calendar" routerLink="/doctors" styleClass="p-button-outlined"></p-button>
         </div>
       </app-empty-state>
 
@@ -71,11 +71,19 @@
               <app-status-tag [status]="apt.status"></app-status-tag>
             </td>
             <td>
-              <p-button *ngIf="apt.status === 'PENDING' || apt.status === 'ACCEPTED'" 
-                        icon="pi pi-times" 
-                        label="Cancel" 
-                        styleClass="p-button-danger p-button-text p-button-sm" 
+              <p-button *ngIf="apt.status === 'PENDING'"
+                        icon="pi pi-times"
+                        label="Cancel"
+                        styleClass="p-button-danger p-button-text p-button-sm"
                         (onClick)="cancelAppointment(apt.id)">
+              </p-button>
+              <p-button *ngIf="apt.status === 'ACCEPTED'"
+                        icon="pi pi-lock"
+                        label="Locked"
+                        styleClass="p-button-secondary p-button-text p-button-sm"
+                        [disabled]="true"
+                        pTooltip="Cannot cancel — appointment accepted by doctor"
+                        tooltipPosition="left">
               </p-button>
             </td>
           </tr>

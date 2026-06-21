@@ -1,77 +1,50 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedPrimeNgModule } from '../primeng.module';
+import { DialogShellComponent } from './dialog-shell/dialog-shell.component';
+import { DialogBodyComponent } from './dialog-body/dialog-body.component';
+import { DialogFooterComponent } from './dialog-footer/dialog-footer.component';
 
-/**
- * Reusable PrimeNG-based confirm dialog.
- * Usage: use ConfirmationService (from primeng/api) directly for most cases.
- * This component is kept for custom inline dialogs.
- */
 @Component({
   selector: 'app-confirm-dialog',
   standalone: true,
-  imports: [CommonModule, SharedPrimeNgModule],
+  imports: [CommonModule, SharedPrimeNgModule, DialogShellComponent, DialogBodyComponent, DialogFooterComponent],
   template: `
-    <p-dialog
-      [(visible)]="visible"
-      [header]="title || 'Confirm Action'"
-      [modal]="true"
-      [closable]="true"
-      [draggable]="false"
-      [resizable]="false"
-      [style]="{ width: '420px' }"
-      (onHide)="onCancel()">
+    <app-dialog-shell
+      [visible]="visible"
+      [title]="title"
+      subtitle="Please confirm your selection below."
+      icon="pi-exclamation-triangle"
+      width="sm"
+      (close)="onCancel()">
 
-      <div class="confirm-body">
-        <i class="pi pi-exclamation-triangle confirm-icon"></i>
-        <p class="confirm-message">{{ message || 'Are you sure you want to proceed?' }}</p>
-      </div>
-
-      <ng-template pTemplate="footer">
-        <div class="confirm-actions">
-          <p-button
-            label="Cancel"
-            icon="pi pi-times"
-            severity="secondary"
-            [outlined]="true"
-            (onClick)="onCancel()">
-          </p-button>
-          <p-button
-            label="Confirm"
-            icon="pi pi-check"
-            severity="danger"
-            (onClick)="onConfirm()">
-          </p-button>
+      <app-dialog-body>
+        <div class="confirm-body">
+          <p class="confirm-message">{{ message }}</p>
         </div>
-      </ng-template>
-    </p-dialog>
+      </app-dialog-body>
+
+      <app-dialog-footer
+        cancelLabel="Cancel"
+        submitLabel="Confirm"
+        submitSeverity="danger"
+        submitIcon="pi pi-check"
+        (cancel)="onCancel()"
+        (submit)="onConfirm()">
+      </app-dialog-footer>
+
+    </app-dialog-shell>
   `,
   styles: [`
     .confirm-body {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
       padding: 8px 4px 16px;
-    }
-
-    .confirm-icon {
-      font-size: 2rem;
-      color: #f59e0b;
-      margin-top: 2px;
-      flex-shrink: 0;
     }
 
     .confirm-message {
       font-size: 0.95rem;
-      color: #475569;
+      color: var(--text-main);
       line-height: 1.6;
       margin: 0;
-    }
-
-    .confirm-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
     }
   `]
 })

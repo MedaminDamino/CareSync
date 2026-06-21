@@ -1,1 +1,145 @@
-/* Styles governed by PrimeFlex classes */
+/* ========== Status Badges ========== */
+.user-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.status-active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-blocked {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-suspended {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* ========== Form Layout ========== */
+.form-section {
+  margin-bottom: 28px;
+}
+
+.form-section:last-child {
+  margin-bottom: 0;
+}
+
+.form-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--surface-border, #e2e8f0);
+}
+
+.form-section-icon {
+  color: var(--primary-color);
+  font-size: 0.9rem;
+}
+
+.form-section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field-full {
+  grid-column: 1 / -1;
+}
+
+.field-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.field-desc {
+  font-size: 0.78rem;
+  color: var(--text-color-secondary);
+  margin: 0;
+}
+
+.required-mark {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+/* ========== Drawer Sections ========== */
+.drawer-section {
+  margin-bottom: 20px;
+}
+
+.drawer-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-color-secondary);
+  margin: 0 0 14px;
+}
+
+.drawer-field-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.drawer-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.drawer-field-label {
+  font-size: 0.82rem;
+  color: var(--text-color-secondary);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.drawer-field-value {
+  font-size: 0.85rem;
+  color: var(--text-color);
+  font-weight: 600;
+  text-align: right;
+}
+
+.drawer-divider {
+  height: 1px;
+  background: var(--surface-border, #e2e8f0);
+  margin: 20px 0;
+}

@@ -8,6 +8,9 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { SearchBarComponent } from '../../../shared/components/search-bar/search-bar.component';
 import { ActionToolbarComponent } from '../../../shared/components/action-toolbar/action-toolbar.component';
+import { DialogShellComponent } from '../../../shared/components/dialog-shell/dialog-shell.component';
+import { DialogBodyComponent } from '../../../shared/components/dialog-body/dialog-body.component';
+import { DialogFooterComponent } from '../../../shared/components/dialog-footer/dialog-footer.component';
 
 @Component({
   selector: 'app-speciality-list',
@@ -19,7 +22,10 @@ import { ActionToolbarComponent } from '../../../shared/components/action-toolba
     PageHeaderComponent, 
     EmptyStateComponent,
     SearchBarComponent,
-    ActionToolbarComponent
+    ActionToolbarComponent,
+    DialogShellComponent,
+    DialogBodyComponent,
+    DialogFooterComponent
   ],
   templateUrl: './speciality-list.component.html',
   styleUrls: ['./speciality-list.component.css']

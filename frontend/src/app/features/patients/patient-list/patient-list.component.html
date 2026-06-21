@@ -1,50 +1,53 @@
 <div class="fade-in-up">
-  <app-page-header title="Patient Directory" subtitle="Manage and view registered patients in the system">
+  <app-page-header title="Patient Directory" subtitle="View and manage registered patients. Use Block/Unblock to control access.">
     <div actions>
-      <p-button label="Add Patient" icon="pi pi-user-plus" (click)="openPatientDialog()" styleClass="p-button-primary"></p-button>
+      <p-button label="Add Patient" icon="pi pi-user-plus" (click)="openCreateModal()" styleClass="p-button-primary"></p-button>
     </div>
   </app-page-header>
 
-  <!-- Action Toolbar with Search -->
+  <!-- Toolbar -->
   <app-action-toolbar>
     <div filters class="flex flex-column sm:flex-row gap-3 w-full">
-      <app-search-bar 
-        placeholder="Search patients by name, email or phone..." 
-        [searchValue]="searchQuery" 
-        (search)="onSearch($event)" 
+      <app-search-bar
+        placeholder="Search by name, email or phone..."
+        [searchValue]="searchQuery"
+        (search)="onSearch($event)"
         class="w-full md:w-24rem">
       </app-search-bar>
     </div>
   </app-action-toolbar>
 
+  <!-- Skeleton -->
   <div *ngIf="loading" class="mb-4">
     <app-skeleton-loader type="table" [count]="5"></app-skeleton-loader>
   </div>
 
+  <!-- Table -->
   <div *ngIf="!loading">
     <p-card>
-      <app-empty-state 
-        *ngIf="filteredPatients.length === 0" 
-        message="No patients found" 
-        description="There are no patients matching the search criteria." 
+      <app-empty-state
+        *ngIf="filteredPatients.length === 0"
+        message="No patients found"
+        description="There are no patients matching the search criteria."
         icon="pi pi-users">
       </app-empty-state>
 
       <p-table *ngIf="filteredPatients.length > 0" [value]="filteredPatients" [paginator]="true" [rows]="10" responsiveLayout="scroll" styleClass="p-datatable-striped">
         <ng-template pTemplate="header">
           <tr>
-            <th>Patient Name</th>
+            <th>Patient</th>
             <th>Email</th>
             <th>Phone</th>
             <th>Date of Birth</th>
-            <th style="width: 120px;">Actions</th>
+            <th>Status</th>
+            <th style="width: 160px;">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-patient>
           <tr>
             <td class="font-semibold text-main">
               <div class="flex align-items-center gap-3">
-                <p-avatar [label]="patient.name.charAt(0)" shape="circle" styleClass="bg-primary text-white"></p-avatar>
+                <p-avatar [label]="patient.name.charAt(0)" shape="circle" styleClass="bg-primary text-white font-bold"></p-avatar>
                 <span>{{ patient.name }}</span>
               </div>
             </td>
@@ -52,9 +55,43 @@
             <td class="text-muted">{{ patient.phone }}</td>
             <td class="text-muted">{{ patient.dateOfBirth | date:'longDate' }}</td>
             <td>
-              <div class="flex gap-2">
-                <p-button icon="pi pi-pencil" styleClass="p-button-rounded p-button-text p-button-info" (click)="openPatientDialog(patient)" pTooltip="Edit Patient"></p-button>
-                <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-text p-button-danger" (click)="deletePatient(patient.id)" pTooltip="Delete Patient"></p-button>
+              <span class="user-status-badge"
+                [class.status-active]="!patient.userStatus || patient.userStatus === 'ACTIVE'"
+                [class.status-blocked]="patient.userStatus === 'BLOCKED'"
+                [class.status-suspended]="patient.userStatus === 'SUSPENDED'">
+                <i class="pi"
+                  [class.pi-check-circle]="!patient.userStatus || patient.userStatus === 'ACTIVE'"
+                  [class.pi-ban]="patient.userStatus === 'BLOCKED'"
+                  [class.pi-pause-circle]="patient.userStatus === 'SUSPENDED'">
+                </i>
+                {{ patient.userStatus || 'ACTIVE' }}
+              </span>
+            </td>
+            <td>
+              <div class="flex gap-1">
+                <p-button
+                  icon="pi pi-eye"
+                  styleClass="p-button-rounded p-button-text p-button-info"
+                  (click)="viewPatient(patient)"
+                  pTooltip="View Profile"
+                  tooltipPosition="top">
+                </p-button>
+                <p-button
+                  *ngIf="!patient.userStatus || patient.userStatus === 'ACTIVE'"
+                  icon="pi pi-ban"
+                  styleClass="p-button-rounded p-button-text p-button-warning"
+                  (click)="openBlockModal(patient)"
+                  pTooltip="Block User"
+                  tooltipPosition="top">
+                </p-button>
+                <p-button
+                  *ngIf="patient.userStatus === 'BLOCKED' || patient.userStatus === 'SUSPENDED'"
+                  icon="pi pi-check-circle"
+                  styleClass="p-button-rounded p-button-text p-button-success"
+                  (click)="unblockPatient(patient)"
+                  pTooltip="Unblock User"
+                  tooltipPosition="top">
+                </p-button>
               </div>
             </td>
           </tr>
@@ -63,42 +100,157 @@
     </p-card>
   </div>
 
-  <!-- Patient Dialog Form -->
-  <p-dialog [(visible)]="displayDialog" [header]="isEdit ? 'Edit Patient Profile' : 'Register New Patient'" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" [resizable]="false" styleClass="p-fluid">
-    <form [formGroup]="patForm" (ngSubmit)="savePatient()" class="flex flex-column gap-3 mt-2">
-      <div class="flex flex-column gap-2">
-        <label for="name" class="font-medium text-main">Full Name</label>
-        <span class="p-input-icon-left w-full">
-          <i class="pi pi-user text-muted"></i>
-          <input id="name" type="text" pInputText formControlName="name" placeholder="Jane Doe" />
-        </span>
-      </div>
+  <!-- ===== CREATE PATIENT MODAL ===== -->
+  <app-dialog-shell
+    [visible]="displayCreateModal"
+    [title]="'Register New Patient'"
+    subtitle="Fill in the patient's personal and medical details to create their profile."
+    icon="pi-user-plus"
+    width="md"
+    (close)="displayCreateModal = false">
 
-      <div class="flex flex-column gap-2">
-        <label for="email" class="font-medium text-main">Email Address</label>
-        <span class="p-input-icon-left w-full">
-          <i class="pi pi-envelope text-muted"></i>
-          <input id="email" type="email" pInputText formControlName="email" placeholder="patient@hospital.com" />
-        </span>
-      </div>
+    <app-dialog-body>
+      <form [formGroup]="patForm" id="createPatientForm">
 
-      <div class="flex flex-column gap-2">
-        <label for="phone" class="font-medium text-main">Phone Number</label>
-        <span class="p-input-icon-left w-full">
-          <i class="pi pi-phone text-muted"></i>
-          <input id="phone" type="text" pInputText formControlName="phone" placeholder="555-0199" />
-        </span>
-      </div>
+        <!-- Personal Information Section -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <i class="pi pi-user form-section-icon"></i>
+            <h3 class="form-section-title">Personal Information</h3>
+          </div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="pat-name" class="field-label">Full Name <span class="required-mark">*</span></label>
+              <input id="pat-name" type="text" pInputText formControlName="name" placeholder="Jane Doe" class="w-full" />
+              <small class="p-error" *ngIf="patForm.get('name')?.touched && patForm.get('name')?.hasError('required')">Name is required.</small>
+            </div>
+            <div class="form-field">
+              <label for="pat-phone" class="field-label">Phone Number <span class="required-mark">*</span></label>
+              <input id="pat-phone" type="text" pInputText formControlName="phone" placeholder="555-0199" class="w-full" />
+              <small class="p-error" *ngIf="patForm.get('phone')?.touched && patForm.get('phone')?.hasError('required')">Phone is required.</small>
+            </div>
+            <div class="form-field form-field-full">
+              <label for="pat-email" class="field-label">Email Address <span class="required-mark">*</span></label>
+              <input id="pat-email" type="email" pInputText formControlName="email" placeholder="patient@example.com" class="w-full" />
+              <small class="p-error" *ngIf="patForm.get('email')?.touched && patForm.get('email')?.hasError('required')">Email is required.</small>
+              <small class="p-error" *ngIf="patForm.get('email')?.touched && patForm.get('email')?.hasError('email')">Please enter a valid email.</small>
+            </div>
+          </div>
+        </div>
 
-      <div class="flex flex-column gap-2">
-        <label for="dateOfBirth" class="font-medium text-main">Date of Birth</label>
-        <p-datepicker id="dateOfBirth" formControlName="dateOfBirth" dateFormat="yy-mm-dd" [maxDate]="today" [showIcon]="true" placeholder="Select date of birth"></p-datepicker>
-      </div>
+        <!-- Medical Information Section -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <i class="pi pi-heart form-section-icon"></i>
+            <h3 class="form-section-title">Medical Information</h3>
+          </div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="pat-dob" class="field-label">Date of Birth <span class="required-mark">*</span></label>
+              <p class="field-desc">Patient's date of birth for medical records.</p>
+              <p-datepicker id="pat-dob" formControlName="dateOfBirth" dateFormat="yy-mm-dd" [maxDate]="today" [showIcon]="true" placeholder="Select date of birth" styleClass="w-full" [appendTo]="'body'" [baseZIndex]="12000"></p-datepicker>
+              <small class="p-error" *ngIf="patForm.get('dateOfBirth')?.touched && patForm.get('dateOfBirth')?.hasError('required')">Date of birth is required.</small>
+            </div>
+            <div class="form-field">
+              <label for="pat-password" class="field-label">Initial Password <span class="required-mark">*</span></label>
+              <p class="field-desc">Temporary password for the patient's account.</p>
+              <p-password id="pat-password" formControlName="password" placeholder="Minimum 6 characters" [feedback]="false" [toggleMask]="true" styleClass="w-full"></p-password>
+              <small class="p-error" *ngIf="patForm.get('password')?.touched && patForm.get('password')?.hasError('required')">Password is required.</small>
+              <small class="p-error" *ngIf="patForm.get('password')?.touched && patForm.get('password')?.hasError('minlength')">Password must be at least 6 characters.</small>
+            </div>
+          </div>
+        </div>
 
-      <div class="flex justify-content-end gap-2 mt-4 border-top-1 border-surface pt-3">
-        <p-button label="Cancel" icon="pi pi-times" [outlined]="true" severity="secondary" (click)="displayDialog = false" type="button"></p-button>
-        <p-button label="Save" icon="pi pi-check" [disabled]="patForm.invalid || saving" [loading]="saving" type="submit"></p-button>
+      </form>
+    </app-dialog-body>
+
+    <app-dialog-footer
+      submitLabel="Register Patient"
+      [submitDisabled]="patForm.invalid || saving"
+      [submitLoading]="saving"
+      (cancel)="displayCreateModal = false"
+      (submit)="savePatient()">
+    </app-dialog-footer>
+  </app-dialog-shell>
+
+  <!-- ===== BLOCK USER MODAL ===== -->
+  <app-block-user-modal
+    [visible]="displayBlockModal"
+    [targetName]="selectedPatient?.name"
+    [loading]="blockLoading"
+    (confirm)="executeBlock($event)"
+    (cancel)="displayBlockModal = false">
+  </app-block-user-modal>
+
+  <!-- ===== PATIENT DETAILS DRAWER ===== -->
+  <app-details-drawer
+    [visible]="displayDrawer"
+    [title]="selectedPatient?.name || ''"
+    [subtitle]="selectedPatient?.userStatus || 'ACTIVE'"
+    [badgeType]="(selectedPatient?.userStatus || 'ACTIVE').toLowerCase()"
+    [avatarLabel]="selectedPatient?.name?.charAt(0) || '?'"
+    (close)="displayDrawer = false">
+
+    <!-- Profile Section -->
+    <div class="drawer-section">
+      <h4 class="drawer-section-title"><i class="pi pi-user mr-2"></i>Personal Information</h4>
+      <div class="drawer-field-list">
+        <div class="drawer-field">
+          <span class="drawer-field-label">Full Name</span>
+          <span class="drawer-field-value">{{ selectedPatient?.name }}</span>
+        </div>
+        <div class="drawer-field">
+          <span class="drawer-field-label">Date of Birth</span>
+          <span class="drawer-field-value">{{ selectedPatient?.dateOfBirth | date:'longDate' }}</span>
+        </div>
       </div>
-    </form>
-  </p-dialog>
+    </div>
+
+    <div class="drawer-divider"></div>
+
+    <!-- Contact Section -->
+    <div class="drawer-section">
+      <h4 class="drawer-section-title"><i class="pi pi-envelope mr-2"></i>Contact Information</h4>
+      <div class="drawer-field-list">
+        <div class="drawer-field">
+          <span class="drawer-field-label">Email Address</span>
+          <span class="drawer-field-value">{{ selectedPatient?.email }}</span>
+        </div>
+        <div class="drawer-field">
+          <span class="drawer-field-label">Phone Number</span>
+          <span class="drawer-field-value">{{ selectedPatient?.phone }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-divider"></div>
+
+    <!-- Account Section -->
+    <div class="drawer-section">
+      <h4 class="drawer-section-title"><i class="pi pi-shield mr-2"></i>Account Status</h4>
+      <div class="drawer-field-list">
+        <div class="drawer-field">
+          <span class="drawer-field-label">Status</span>
+          <span class="user-status-badge"
+            [class.status-active]="!selectedPatient?.userStatus || selectedPatient?.userStatus === 'ACTIVE'"
+            [class.status-blocked]="selectedPatient?.userStatus === 'BLOCKED'"
+            [class.status-suspended]="selectedPatient?.userStatus === 'SUSPENDED'">
+            {{ selectedPatient?.userStatus || 'ACTIVE' }}
+          </span>
+        </div>
+        <div class="drawer-field" *ngIf="selectedPatient?.userStatus === 'BLOCKED'">
+          <span class="drawer-field-label">Block Reason</span>
+          <span class="drawer-field-value">{{ selectedPatient?.blockReason || 'N/A' }}</span>
+        </div>
+        <div class="drawer-field" *ngIf="selectedPatient?.blockedAt">
+          <span class="drawer-field-label">Blocked On</span>
+          <span class="drawer-field-value">{{ selectedPatient?.blockedAt | date:'medium' }}</span>
+        </div>
+      </div>
+    </div>
+
+  </app-details-drawer>
+
+  <p-confirmdialog></p-confirmdialog>
+  <p-toast></p-toast>
 </div>

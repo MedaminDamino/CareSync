@@ -1,53 +1,53 @@
 <div class="fade-in-up">
   <app-page-header title="Doctors Directory" subtitle="Find and book appointments with our medical professionals">
-    <div actions>
-      <p-button *ngIf="isAdmin" label="Add Doctor" icon="pi pi-user-plus" (click)="openDoctorDialog()" styleClass="p-button-primary"></p-button>
-    </div>
   </app-page-header>
 
-  <!-- Action Toolbar with Search & Filter -->
+  <!-- Toolbar -->
   <app-action-toolbar>
     <div filters class="flex flex-column sm:flex-row gap-3 w-full">
-      <app-search-bar 
-        placeholder="Search by name, email or speciality..." 
-        [searchValue]="searchQuery" 
-        (search)="onSearch($event)" 
+      <app-search-bar
+        placeholder="Search by name, email or speciality..."
+        [searchValue]="searchQuery"
+        (search)="onSearch($event)"
         class="w-full md:w-24rem">
       </app-search-bar>
-      
-      <app-filter-bar 
-        [options]="specialities" 
-        optionLabel="name" 
-        optionValue="id" 
-        placeholder="Filter by Speciality" 
-        [filterValue]="selectedSpecialityId" 
-        (filter)="filterBySpeciality($event)" 
+      <app-filter-bar
+        [options]="specialities"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="Filter by Speciality"
+        [filterValue]="selectedSpecialityId"
+        (filter)="filterBySpeciality($event)"
         class="w-full md:w-18rem">
       </app-filter-bar>
     </div>
+    <div actions>
+      <p-button *ngIf="isAdmin" label="Add Doctor" icon="pi pi-user-plus" (click)="openCreateModal()" styleClass="p-button-primary"></p-button>
+    </div>
   </app-action-toolbar>
 
+  <!-- Skeleton -->
   <div *ngIf="loading" class="grid">
     <div class="col-12 md:col-6 lg:col-4 xl:col-3" *ngFor="let item of [1, 2, 3, 4]">
       <app-skeleton-loader type="card" [count]="1"></app-skeleton-loader>
     </div>
   </div>
 
+  <!-- Doctor Cards -->
   <div *ngIf="!loading">
-    <app-empty-state 
-      *ngIf="filteredDoctors.length === 0" 
-      message="No doctors found" 
-      description="There are no doctors matching the search filters in the system." 
+    <app-empty-state
+      *ngIf="filteredDoctors.length === 0"
+      message="No doctors found"
+      description="There are no doctors matching the search filters in the system."
       icon="pi pi-users">
     </app-empty-state>
 
     <div class="grid" *ngIf="filteredDoctors.length > 0">
       <div class="col-12 md:col-6 lg:col-4 xl:col-3 p-3 animate-fade-in" *ngFor="let doc of filteredDoctors">
-        <!-- Premium Doctor Card -->
-        <p-card styleClass="hover-card border-round-xl">
+        <p-card styleClass="hover-card border-round-xl h-full">
           <ng-template pTemplate="content">
             <div class="flex flex-column h-full">
-              <!-- Top Metadata & Rating -->
+              <!-- Top row -->
               <div class="flex justify-content-between align-items-center mb-3">
                 <span class="text-xs font-semibold px-2 py-1 border-round bg-primary-light text-primary">
                   <i class="pi pi-clock mr-1 text-xs"></i>{{ doc.availability }}
@@ -59,15 +59,15 @@
                 </div>
               </div>
 
-              <!-- Avatar, Name & Speciality -->
+              <!-- Avatar -->
               <div class="flex flex-column align-items-center text-center mb-4">
-                <div class="avatar-container mb-3">
-                  <p-avatar 
-                    [label]="doc.name.charAt(0)" 
-                    size="xlarge" 
-                    shape="circle" 
-                    styleClass="bg-primary text-white text-2xl font-bold">
-                  </p-avatar>
+                <div class="avatar-container mb-3 relative">
+                  <p-avatar [label]="doc.name.charAt(0)" size="xlarge" shape="circle" styleClass="bg-primary text-white text-2xl font-bold"></p-avatar>
+                  <!-- Status indicator -->
+                  <span *ngIf="isAdmin" class="doc-status-dot"
+                    [class.dot-active]="!doc.userStatus || doc.userStatus === 'ACTIVE'"
+                    [class.dot-blocked]="doc.userStatus === 'BLOCKED'">
+                  </span>
                 </div>
                 <h3 class="text-xl font-bold m-0 mb-1 text-main font-outfit">Dr. {{ doc.name }}</h3>
                 <span class="text-xs font-semibold text-primary bg-primary-light px-3 py-1 border-round-md inline-block">
@@ -75,7 +75,7 @@
                 </span>
               </div>
 
-              <!-- Card Details -->
+              <!-- Details -->
               <div class="flex flex-column gap-2 text-sm text-muted mb-4">
                 <div class="flex align-items-center gap-2">
                   <i class="pi pi-briefcase text-primary text-sm"></i>
@@ -91,18 +91,37 @@
                 </div>
               </div>
 
-              <!-- Action Footer -->
+              <!-- Actions -->
               <div class="flex justify-content-center gap-2 w-full mt-auto pt-3 border-top-1 border-surface">
-                <p-button 
-                  *ngIf="isPatient" 
-                  label="Book Appointment" 
-                  icon="pi pi-calendar-plus" 
-                  styleClass="p-button-outlined p-button-primary w-full" 
+                <!-- Patient: book -->
+                <p-button
+                  *ngIf="isPatient"
+                  label="Book Appointment"
+                  icon="pi pi-calendar-plus"
+                  styleClass="p-button-outlined p-button-primary w-full"
                   (onClick)="openBookingDialog(doc)">
                 </p-button>
+
+                <!-- Admin: view + block/unblock -->
                 <ng-container *ngIf="isAdmin">
-                  <p-button icon="pi pi-pencil" styleClass="p-button-rounded p-button-text p-button-info" (onClick)="openDoctorDialog(doc)" pTooltip="Edit Doctor"></p-button>
-                  <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-text p-button-danger" (onClick)="deleteDoctor(doc.id)" pTooltip="Delete Doctor"></p-button>
+                  <p-button icon="pi pi-eye" styleClass="p-button-rounded p-button-text p-button-info" (onClick)="viewDoctor(doc)" pTooltip="View Profile" tooltipPosition="top"></p-button>
+                  <p-button
+                    *ngIf="!doc.userStatus || doc.userStatus === 'ACTIVE'"
+                    icon="pi pi-ban"
+                    styleClass="p-button-rounded p-button-text p-button-warning"
+                    (onClick)="openBlockModal(doc)"
+                    pTooltip="Block Doctor"
+                    tooltipPosition="top">
+                  </p-button>
+                  <p-button
+                    *ngIf="doc.userStatus === 'BLOCKED' || doc.userStatus === 'SUSPENDED'"
+                    icon="pi pi-check-circle"
+                    styleClass="p-button-rounded p-button-text p-button-success"
+                    (onClick)="unblockDoctor(doc)"
+                    pTooltip="Unblock Doctor"
+                    tooltipPosition="top">
+                  </p-button>
+                  <p-button icon="pi pi-pencil" styleClass="p-button-rounded p-button-text p-button-secondary" (onClick)="openEditModal(doc)" pTooltip="Edit Profile" tooltipPosition="top"></p-button>
                 </ng-container>
               </div>
             </div>
@@ -112,75 +131,213 @@
     </div>
   </div>
 
-  <!-- Admin: Doctor Form Dialog -->
-  <p-dialog [(visible)]="displayDoctorDialog" [header]="isEdit ? 'Edit Doctor Profile' : 'Register New Doctor'" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" [resizable]="false" styleClass="p-fluid">
-    <form [formGroup]="docForm" (ngSubmit)="saveDoctor()" class="flex flex-column gap-3 mt-2">
-      <div class="flex flex-column gap-2">
-        <label for="name" class="font-medium text-main">Full Name</label>
-        <span class="p-input-icon-left w-full">
-          <i class="pi pi-user text-muted"></i>
-          <input id="name" type="text" pInputText formControlName="name" placeholder="John Doe" />
-        </span>
-      </div>
+  <!-- ===== CREATE / EDIT DOCTOR MODAL ===== -->
+  <app-dialog-shell
+    [visible]="displayDoctorModal"
+    [title]="isEdit ? 'Edit Doctor Profile' : 'Register New Doctor'"
+    [subtitle]="isEdit ? 'Update the doctor\'s professional information.' : 'Fill in the details to register a new doctor in the system.'"
+    icon="pi-user-plus"
+    width="md"
+    (close)="displayDoctorModal = false">
 
-      <div class="flex flex-column gap-2">
-        <label for="email" class="font-medium text-main">Email Address</label>
-        <span class="p-input-icon-left w-full">
-          <i class="pi pi-envelope text-muted"></i>
-          <input id="email" type="email" pInputText formControlName="email" placeholder="doctor@hospital.com" />
-        </span>
-      </div>
+    <app-dialog-body>
+      <form [formGroup]="docForm">
 
-      <div class="flex flex-column gap-2">
-        <label for="phone" class="font-medium text-main">Phone Number</label>
-        <span class="p-input-icon-left w-full">
-          <i class="pi pi-phone text-muted"></i>
-          <input id="phone" type="text" pInputText formControlName="phone" placeholder="555-0199" />
-        </span>
-      </div>
+        <!-- Professional Information -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <i class="pi pi-id-card form-section-icon"></i>
+            <h3 class="form-section-title">Professional Information</h3>
+          </div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="doc-name" class="field-label">Full Name <span class="required-mark">*</span></label>
+              <input id="doc-name" type="text" pInputText formControlName="name" placeholder="Dr. Jane Doe" class="w-full" />
+              <small class="p-error" *ngIf="docForm.get('name')?.touched && docForm.get('name')?.hasError('required')">Name is required.</small>
+            </div>
+            <div class="form-field">
+              <label for="doc-speciality" class="field-label">Speciality <span class="required-mark">*</span></label>
+              <p-select id="doc-speciality" [options]="specialities" formControlName="specialityId" optionLabel="name" optionValue="id" placeholder="Select a speciality" styleClass="w-full"></p-select>
+              <small class="p-error" *ngIf="docForm.get('specialityId')?.touched && docForm.get('specialityId')?.hasError('required')">Speciality is required.</small>
+            </div>
+            <div class="form-field">
+              <label for="doc-email" class="field-label">Email Address <span class="required-mark">*</span></label>
+              <input id="doc-email" type="email" pInputText formControlName="email" placeholder="doctor@hospital.com" class="w-full" [attr.disabled]="isEdit ? true : null" />
+              <small class="p-error" *ngIf="docForm.get('email')?.touched && docForm.get('email')?.hasError('required')">Email is required.</small>
+            </div>
+            <div class="form-field">
+              <label for="doc-phone" class="field-label">Phone Number <span class="required-mark">*</span></label>
+              <input id="doc-phone" type="text" pInputText formControlName="phone" placeholder="555-0101" class="w-full" />
+              <small class="p-error" *ngIf="docForm.get('phone')?.touched && docForm.get('phone')?.hasError('required')">Phone is required.</small>
+            </div>
+            <div class="form-field form-field-full" *ngIf="!isEdit">
+              <label for="doc-password" class="field-label">Initial Password <span class="required-mark">*</span></label>
+              <p class="field-desc">A temporary password for the doctor's login account.</p>
+              <p-password id="doc-password" formControlName="password" placeholder="Minimum 6 characters" [feedback]="false" [toggleMask]="true" styleClass="w-full"></p-password>
+              <small class="p-error" *ngIf="docForm.get('password')?.touched && docForm.get('password')?.hasError('required')">Password is required.</small>
+            </div>
+          </div>
+        </div>
 
-      <div class="flex flex-column gap-2">
-        <label for="specialityId" class="font-medium text-main">Speciality</label>
-        <p-select id="specialityId" [options]="specialities" formControlName="specialityId" optionLabel="name" optionValue="id" placeholder="Select a speciality"></p-select>
-      </div>
+      </form>
+    </app-dialog-body>
 
-      <div class="flex justify-content-end gap-2 mt-4 border-top-1 border-surface pt-3">
-        <p-button label="Cancel" icon="pi pi-times" [outlined]="true" severity="secondary" (click)="displayDoctorDialog = false" type="button"></p-button>
-        <p-button label="Save" icon="pi pi-check" [disabled]="docForm.invalid || savingDoctor" [loading]="savingDoctor" type="submit"></p-button>
-      </div>
-    </form>
-  </p-dialog>
+    <app-dialog-footer
+      [submitLabel]="isEdit ? 'Save Changes' : 'Register Doctor'"
+      [submitDisabled]="docForm.invalid || savingDoctor"
+      [submitLoading]="savingDoctor"
+      (cancel)="displayDoctorModal = false"
+      (submit)="saveDoctor()">
+    </app-dialog-footer>
+  </app-dialog-shell>
 
-  <!-- Patient: Book Appointment Dialog -->
-  <p-dialog [(visible)]="displayBookingDialog" header="Book Appointment" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" [resizable]="false" styleClass="p-fluid">
-    <div *ngIf="bookingDoctor" class="mb-4 p-3 bg-primary-light p-dark:bg-primary-900/20 border-round flex align-items-center gap-3">
-      <p-avatar [label]="bookingDoctor.name.charAt(0)" shape="circle" styleClass="bg-primary text-white"></p-avatar>
-      <div>
-        <h4 class="m-0 text-main">Dr. {{ bookingDoctor.name }}</h4>
-        <span class="text-sm text-primary font-medium">{{ bookingDoctor.speciality?.name }}</span>
+  <!-- ===== BOOKING MODAL ===== -->
+  <app-dialog-shell
+    [visible]="displayBookingDialog"
+    title="Book Appointment"
+    subtitle="Select a date and time slot and describe your reason for visiting."
+    icon="pi-calendar-plus"
+    width="md"
+    (close)="displayBookingDialog = false">
+
+    <!-- Doctor Hero Banner (Directly inside shell so it spans full width without dialog-body's padding) -->
+    <div *ngIf="bookingDoctor" class="booking-hero-section">
+      <div class="booking-hero-content">
+        <p-avatar [label]="bookingDoctor.name.charAt(0)" shape="circle" size="xlarge" styleClass="booking-avatar-large"></p-avatar>
+        <div class="booking-doctor-info">
+          <div class="booking-doctor-header">
+            <h3 class="booking-doctor-name">Dr. {{ bookingDoctor.name }}</h3>
+            <span class="availability-badge" [class.available-today]="bookingDoctor.availability === 'Available Today'">
+              <i class="pi pi-clock mr-1"></i>{{ bookingDoctor.availability }}
+            </span>
+          </div>
+          
+          <div class="booking-doctor-meta">
+            <span class="booking-doctor-spec">{{ bookingDoctor.speciality?.name || 'General Practitioner' }}</span>
+            <span class="meta-divider">•</span>
+            <span class="booking-doctor-exp">
+              <i class="pi pi-briefcase mr-1"></i>{{ bookingDoctor.experience }} Experience
+            </span>
+          </div>
+          
+          <div class="booking-doctor-rating">
+            <i class="pi pi-star-fill rating-star"></i>
+            <span class="rating-val">{{ bookingDoctor.rating }}</span>
+            <span class="rating-count">({{ bookingDoctor.reviewsCount }} reviews)</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <form [formGroup]="bookingForm" (ngSubmit)="bookAppointment()" class="flex flex-column gap-3">
-      <div class="flex flex-column gap-2">
-        <label for="date" class="font-medium text-main">Appointment Date</label>
-        <p-datepicker id="date" formControlName="date" dateFormat="yy-mm-dd" [minDate]="today" [showIcon]="true" placeholder="Select date"></p-datepicker>
-      </div>
+    <!-- Booking Form wrapped in app-dialog-body for the 32px padding and scrolling -->
+    <app-dialog-body>
+      <form [formGroup]="bookingForm">
+        <div class="form-section">
+          <div class="form-section-header">
+            <i class="pi pi-calendar form-section-icon"></i>
+            <h3 class="form-section-title">Schedule</h3>
+          </div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="book-date" class="field-label">Appointment Date <span class="required-mark">*</span></label>
+              <p-datepicker id="book-date" formControlName="date" dateFormat="yy-mm-dd" [minDate]="today" [showIcon]="true" placeholder="Select date" styleClass="w-full" [appendTo]="'body'" [baseZIndex]="12000"></p-datepicker>
+              <small class="p-error" *ngIf="bookingForm.get('date')?.touched && bookingForm.get('date')?.hasError('required')">Date is required.</small>
+            </div>
+            <div class="form-field">
+              <label for="book-time" class="field-label">Time Slot <span class="required-mark">*</span></label>
+              <p-select id="book-time" [options]="timeSlots" formControlName="time" placeholder="Select time slot" styleClass="w-full"></p-select>
+              <small class="p-error" *ngIf="bookingForm.get('time')?.touched && bookingForm.get('time')?.hasError('required')">Time slot is required.</small>
+            </div>
+            <div class="form-field form-field-full">
+              <label for="book-reason" class="field-label">Reason for Visit <span class="required-mark">*</span></label>
+              <p class="field-desc">Briefly describe your symptoms or the purpose of your visit.</p>
+              <textarea id="book-reason" pInputTextarea formControlName="reason" rows="3" placeholder="e.g. Routine cardiac checkup, experiencing chest pain..." class="w-full"></textarea>
+              <small class="p-error" *ngIf="bookingForm.get('reason')?.touched && bookingForm.get('reason')?.hasError('required')">Reason is required.</small>
+            </div>
+          </div>
+        </div>
+      </form>
+    </app-dialog-body>
 
-      <div class="flex flex-column gap-2">
-        <label for="time" class="font-medium text-main">Available Time</label>
-        <p-select id="time" [options]="timeSlots" formControlName="time" placeholder="Select time slot"></p-select>
-      </div>
+    <app-dialog-footer
+      submitLabel="Confirm Booking"
+      submitIcon="pi pi-calendar-plus"
+      [submitDisabled]="bookingForm.invalid || bookingLoading"
+      [submitLoading]="bookingLoading"
+      (cancel)="displayBookingDialog = false"
+      (submit)="bookAppointment()">
+    </app-dialog-footer>
+  </app-dialog-shell>
 
-      <div class="flex flex-column gap-2">
-        <label for="reason" class="font-medium text-main">Reason for Visit</label>
-        <textarea id="reason" pInputTextarea formControlName="reason" rows="3" placeholder="Briefly describe your symptoms or reason for the visit..."></textarea>
-      </div>
+  <!-- ===== BLOCK MODAL ===== -->
+  <app-block-user-modal
+    [visible]="displayBlockModal"
+    [targetName]="selectedDoctor?.name"
+    [loading]="blockLoading"
+    (confirm)="executeBlock($event)"
+    (cancel)="displayBlockModal = false">
+  </app-block-user-modal>
 
-      <div class="flex justify-content-end gap-2 mt-4 border-top-1 border-surface pt-3">
-        <p-button label="Cancel" icon="pi pi-times" [outlined]="true" severity="secondary" (click)="displayBookingDialog = false" type="button"></p-button>
-        <p-button label="Confirm Booking" icon="pi pi-check" [disabled]="bookingForm.invalid || bookingLoading" [loading]="bookingLoading" type="submit"></p-button>
+  <!-- ===== DOCTOR DETAILS DRAWER ===== -->
+  <app-details-drawer
+    [visible]="displayDrawer"
+    [title]="'Dr. ' + (selectedDoctor?.name || '')"
+    [subtitle]="selectedDoctor?.userStatus || 'ACTIVE'"
+    [badgeType]="(selectedDoctor?.userStatus || 'ACTIVE').toLowerCase()"
+    [avatarLabel]="selectedDoctor?.name?.charAt(0) || 'D'"
+    (close)="displayDrawer = false">
+
+    <div class="drawer-section">
+      <h4 class="drawer-section-title"><i class="pi pi-id-card mr-2"></i>Professional Information</h4>
+      <div class="drawer-field-list">
+        <div class="drawer-field">
+          <span class="drawer-field-label">Speciality</span>
+          <span class="drawer-field-value">{{ selectedDoctor?.speciality?.name }}</span>
+        </div>
+        <div class="drawer-field">
+          <span class="drawer-field-label">Experience</span>
+          <span class="drawer-field-value">{{ selectedDoctor?.experience }}</span>
+        </div>
       </div>
-    </form>
-  </p-dialog>
+    </div>
+
+    <div class="drawer-divider"></div>
+
+    <div class="drawer-section">
+      <h4 class="drawer-section-title"><i class="pi pi-envelope mr-2"></i>Contact Information</h4>
+      <div class="drawer-field-list">
+        <div class="drawer-field">
+          <span class="drawer-field-label">Email</span>
+          <span class="drawer-field-value">{{ selectedDoctor?.email }}</span>
+        </div>
+        <div class="drawer-field">
+          <span class="drawer-field-label">Phone</span>
+          <span class="drawer-field-value">{{ selectedDoctor?.phone }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-divider"></div>
+
+    <div class="drawer-section">
+      <h4 class="drawer-section-title"><i class="pi pi-shield mr-2"></i>Account Status</h4>
+      <div class="drawer-field-list">
+        <div class="drawer-field">
+          <span class="drawer-field-label">Status</span>
+          <span class="user-status-badge"
+            [class.status-active]="!selectedDoctor?.userStatus || selectedDoctor?.userStatus === 'ACTIVE'"
+            [class.status-blocked]="selectedDoctor?.userStatus === 'BLOCKED'"
+            [class.status-suspended]="selectedDoctor?.userStatus === 'SUSPENDED'">
+            {{ selectedDoctor?.userStatus || 'ACTIVE' }}
+          </span>
+        </div>
+        <div class="drawer-field" *ngIf="selectedDoctor?.userStatus === 'BLOCKED'">
+          <span class="drawer-field-label">Block Reason</span>
+          <span class="drawer-field-value">{{ selectedDoctor?.blockReason || 'N/A' }}</span>
+        </div>
+      </div>
+    </div>
+  </app-details-drawer>
+
+  <p-toast></p-toast>
 </div>

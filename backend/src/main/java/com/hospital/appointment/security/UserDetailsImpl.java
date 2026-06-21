@@ -2,6 +2,7 @@ package com.hospital.appointment.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hospital.appointment.entity.User;
+import com.hospital.appointment.enums.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,12 +15,14 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
+    private UserStatus status;
 
-    public UserDetailsImpl(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities, UserStatus status) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+        this.status = status;
     }
 
     public static UserDetailsImpl build(User user) {
@@ -28,7 +31,8 @@ public class UserDetailsImpl implements UserDetails {
                 user.getId(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities
+                authorities,
+                user.getStatus()
         );
     }
 
@@ -47,7 +51,9 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() { return true; }
+    public boolean isAccountNonLocked() {
+        return status == null || status == UserStatus.ACTIVE;
+    }
 
     @Override
     public boolean isCredentialsNonExpired() { return true; }
@@ -55,3 +61,4 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() { return true; }
 }
+

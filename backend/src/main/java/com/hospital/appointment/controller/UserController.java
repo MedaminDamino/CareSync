@@ -1,5 +1,6 @@
 package com.hospital.appointment.controller;
 
+import com.hospital.appointment.dto.BlockUserRequest;
 import com.hospital.appointment.dto.UserDTO;
 import com.hospital.appointment.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,4 +37,20 @@ public class UserController {
         }
         return ResponseEntity.ok(userService.getUserByEmail(userDetails.getUsername()));
     }
+
+    @PatchMapping("/{id}/block")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserDTO> blockUser(
+            @PathVariable Long id,
+            @RequestBody BlockUserRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(userService.blockUser(id, request, userDetails.getUsername()));
+    }
+
+    @PatchMapping("/{id}/unblock")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserDTO> unblockUser(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.unblockUser(id));
+    }
 }
+

@@ -12,6 +12,11 @@ public class UserMapper {
                 .id(user.getId())
                 .email(user.getEmail())
                 .role(user.getRole())
+                .status(user.getStatus())
+                .blockReason(user.getBlockReason())
+                .blockedAt(user.getBlockedAt())
+                .blockedBy(user.getBlockedBy())
                 .build();
     }
 }
+

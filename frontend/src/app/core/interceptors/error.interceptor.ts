@@ -11,7 +11,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((err) => {
-      if ([401, 403].includes(err.status)) {
+      if (err.status === 401) {
         authService.logout();
         router.navigate(['/login']);
       }

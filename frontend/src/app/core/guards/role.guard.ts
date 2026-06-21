@@ -9,14 +9,18 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const expectedRoles = route.data['roles'] as Array<string>;
   const currentUser = authService.currentUserValue;
 
-  if (currentUser && expectedRoles.includes(currentUser.role)) {
-    return true;
+  if (currentUser && currentUser.role) {
+    const userRoleUpper = currentUser.role.toUpperCase();
+    const expectedRolesUpper = expectedRoles.map(role => role.toUpperCase());
+    if (expectedRolesUpper.includes(userRoleUpper)) {
+      return true;
+    }
   }
 
   if (!authService.isLoggedIn()) {
     router.navigate(['/login']);
   } else {
-    const role = currentUser.role;
+    const role = currentUser?.role?.toUpperCase();
     if (role === 'ADMIN') {
       router.navigate(['/dashboard/admin']);
     } else if (role === 'DOCTOR') {
