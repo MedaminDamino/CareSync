@@ -50,6 +50,13 @@
   --radius-xl: 16px;
   --radius-full: 9999px;
 
+  /* Form Control Design Tokens */
+  --form-control-height: 42px;
+  --form-control-border-radius: var(--radius-md);
+  --form-control-padding-y: 0.6rem;
+  --form-control-padding-x: 0.85rem;
+  --form-control-font-size: 14px;
+
   /* PrimeNG Aura Colors Mapping (Light Mode) */
   --p-primary-50: #eff6ff;
   --p-primary-100: #dbeafe;
@@ -207,26 +214,92 @@ p, span, td, th, label {
   padding: 1.5rem !important;
 }
 
-/* Form Inputs & Controls Styling */
-.p-inputtext, .p-select, .p-password input, textarea {
+/* Centralized Form Control Sizing & Styling Rules */
+.p-inputtext, 
+.p-password input, 
+textarea {
+  min-height: var(--form-control-height) !important;
+  height: var(--form-control-height) !important;
   background: var(--card-bg) !important;
   color: var(--text-main) !important;
   border: 1px solid var(--border-color) !important;
-  border-radius: var(--radius-md) !important;
-  padding: 0.6rem 0.85rem !important;
+  border-radius: var(--form-control-border-radius) !important;
+  padding: var(--form-control-padding-y) var(--form-control-padding-x) !important;
+  font-size: var(--form-control-font-size) !important;
+  box-sizing: border-box !important;
   transition: all 0.2s ease !important;
-  font-size: 14px !important;
 }
 
-.p-inputtext:enabled:hover, .p-select:not(.p-disabled):hover {
+/* Textareas should dynamically size vertical height but share same base styling */
+textarea {
+  min-height: 100px !important;
+  height: auto !important;
+}
+
+/* Select / Dropdown Elements (.p-select) */
+.p-select {
+  height: var(--form-control-height) !important;
+  min-height: var(--form-control-height) !important;
+  background: var(--card-bg) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--form-control-border-radius) !important;
+  font-size: var(--form-control-font-size) !important;
+  box-sizing: border-box !important;
+  padding: 0 !important; /* Strip outer padding completely to prevent bloating */
+  display: inline-flex !important;
+  align-items: center !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Style the inner label of select to align center vertically */
+.p-select .p-select-label {
+  padding: 0 var(--form-control-padding-x) !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  background: transparent !important;
+  color: var(--text-main) !important;
+  border: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Style the dropdown trigger arrow inside select */
+.p-select .p-select-trigger {
+  width: 2.5rem !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: var(--text-muted) !important;
+}
+
+/* Hover and Focus States across all form controls */
+.p-inputtext:enabled:hover,
+.p-select:not(.p-disabled):hover,
+p-datepicker input:hover,
+.p-password input:hover,
+textarea:hover {
   border-color: var(--text-muted) !important;
 }
 
 .p-inputtext:enabled:focus, 
-.p-select:not(.p-disabled).p-focus {
+.p-select:not(.p-disabled).p-focus,
+p-datepicker input:focus,
+.p-password input:focus,
+textarea:focus {
   border-color: var(--primary-color) !important;
   box-shadow: 0 0 0 3px var(--primary-light) !important;
   outline: none !important;
+}
+
+.p-dark .p-inputtext:enabled:focus,
+.p-dark .p-select:not(.p-disabled).p-focus,
+.p-dark p-datepicker input:focus,
+.p-dark .p-password input:focus,
+.p-dark textarea:focus {
+  border-color: #60a5fa !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25) !important;
 }
 
 .p-error {
@@ -657,28 +730,7 @@ p, span, td, th, label {
   margin-left: 2px;
 }
 
-/* Premium Form Controls (consistent heights, larger click targets, focus glows) */
-.p-inputtext, 
-.p-select, 
-.p-password input, 
-textarea {
-  min-height: 42px !important;
-}
-.p-inputtext:enabled:focus, 
-.p-select:not(.p-disabled).p-focus,
-textarea:focus,
-.p-password input:focus {
-  border-color: var(--primary-color) !important;
-  box-shadow: 0 0 0 3px var(--primary-light) !important;
-  outline: none !important;
-}
-.p-dark .p-inputtext:enabled:focus,
-.p-dark .p-select:not(.p-disabled).p-focus,
-.p-dark textarea:focus,
-.p-dark .p-password input:focus {
-  border-color: #60a5fa !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25) !important;
-}
+
 
 /* Premium Calendar Overlay Panel Styling */
 .p-datepicker-panel,
@@ -768,15 +820,16 @@ p-datepicker input,
 .p-datepicker-input {
   flex: 1 1 auto !important;
   width: 1% !important;
-  min-height: 42px !important;
+  height: var(--form-control-height) !important;
+  min-height: var(--form-control-height) !important;
   background: var(--card-bg) !important;
   color: var(--text-main) !important;
   border: 1px solid var(--border-color) !important;
   border-top-right-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
-  border-top-left-radius: var(--radius-md) !important;
-  border-bottom-left-radius: var(--radius-md) !important;
-  padding: 0.6rem 0.85rem !important;
+  border-top-left-radius: var(--form-control-border-radius) !important;
+  border-bottom-left-radius: var(--form-control-border-radius) !important;
+  padding: var(--form-control-padding-y) var(--form-control-padding-x) !important;
   box-sizing: border-box !important;
   transition: all 0.2s ease !important;
 }
@@ -799,13 +852,14 @@ p-datepicker input:focus,
 /* The dropdown calendar button */
 .p-datepicker-dropdown {
   flex: 0 0 auto !important;
-  min-height: 42px !important;
+  height: var(--form-control-height) !important;
+  min-height: var(--form-control-height) !important;
   background: var(--border-light, #f1f5f9) !important;
   border: 1px solid var(--border-color) !important;
   margin-left: -1px !important; /* Overlap borders */
   color: var(--text-muted) !important;
-  border-top-right-radius: var(--radius-md) !important;
-  border-bottom-right-radius: var(--radius-md) !important;
+  border-top-right-radius: var(--form-control-border-radius) !important;
+  border-bottom-right-radius: var(--form-control-border-radius) !important;
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
   padding: 0 1rem !important;
