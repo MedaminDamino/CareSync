@@ -43,90 +43,17 @@
     </app-empty-state>
 
     <div class="grid" *ngIf="filteredDoctors.length > 0">
-      <div class="col-12 md:col-6 lg:col-4 xl:col-3 p-3 animate-fade-in" *ngFor="let doc of filteredDoctors">
-        <p-card styleClass="hover-card border-round-xl h-full">
-          <ng-template pTemplate="content">
-            <div class="flex flex-column h-full">
-              <!-- Top row -->
-              <div class="flex justify-content-between align-items-center mb-3">
-                <span class="text-xs font-semibold px-2 py-1 border-round bg-primary-light text-primary">
-                  <i class="pi pi-clock mr-1 text-xs"></i>{{ doc.availability }}
-                </span>
-                <div class="flex align-items-center gap-1">
-                  <i class="pi pi-star-fill text-warning text-xs"></i>
-                  <span class="font-bold text-sm text-main">{{ doc.rating }}</span>
-                  <span class="text-xs text-muted font-normal">({{ doc.reviewsCount }})</span>
-                </div>
-              </div>
-
-              <!-- Avatar -->
-              <div class="flex flex-column align-items-center text-center mb-4">
-                <div class="avatar-container mb-3 relative">
-                  <p-avatar [label]="doc.name.charAt(0)" size="xlarge" shape="circle" styleClass="bg-primary text-white text-2xl font-bold"></p-avatar>
-                  <!-- Status indicator -->
-                  <span *ngIf="isAdmin" class="doc-status-dot"
-                    [class.dot-active]="!doc.userStatus || doc.userStatus === 'ACTIVE'"
-                    [class.dot-blocked]="doc.userStatus === 'BLOCKED'">
-                  </span>
-                </div>
-                <h3 class="text-xl font-bold m-0 mb-1 text-main font-outfit">Dr. {{ doc.name }}</h3>
-                <span class="text-xs font-semibold text-primary bg-primary-light px-3 py-1 border-round-md inline-block">
-                  {{ doc.speciality?.name || 'General Practitioner' }}
-                </span>
-              </div>
-
-              <!-- Details -->
-              <div class="flex flex-column gap-2 text-sm text-muted mb-4">
-                <div class="flex align-items-center gap-2">
-                  <i class="pi pi-briefcase text-primary text-sm"></i>
-                  <span class="text-main font-medium">{{ doc.experience }} Experience</span>
-                </div>
-                <div class="flex align-items-center gap-2">
-                  <i class="pi pi-envelope text-sm"></i>
-                  <span class="text-overflow-ellipsis overflow-hidden white-space-nowrap" [pTooltip]="doc.email">{{ doc.email }}</span>
-                </div>
-                <div class="flex align-items-center gap-2">
-                  <i class="pi pi-phone text-sm"></i>
-                  <span>{{ doc.phone }}</span>
-                </div>
-              </div>
-
-              <!-- Actions -->
-              <div class="flex justify-content-center gap-2 w-full mt-auto pt-3 border-top-1 border-surface">
-                <!-- Patient: book -->
-                <p-button
-                  *ngIf="isPatient"
-                  label="Book Appointment"
-                  icon="pi pi-calendar-plus"
-                  styleClass="p-button-outlined p-button-primary w-full"
-                  (onClick)="openBookingDialog(doc)">
-                </p-button>
-
-                <!-- Admin: view + block/unblock -->
-                <ng-container *ngIf="isAdmin">
-                  <p-button icon="pi pi-eye" styleClass="p-button-rounded p-button-text p-button-info" (onClick)="viewDoctor(doc)" pTooltip="View Profile" tooltipPosition="top"></p-button>
-                  <p-button
-                    *ngIf="!doc.userStatus || doc.userStatus === 'ACTIVE'"
-                    icon="pi pi-ban"
-                    styleClass="p-button-rounded p-button-text p-button-warning"
-                    (onClick)="openBlockModal(doc)"
-                    pTooltip="Block Doctor"
-                    tooltipPosition="top">
-                  </p-button>
-                  <p-button
-                    *ngIf="doc.userStatus === 'BLOCKED' || doc.userStatus === 'SUSPENDED'"
-                    icon="pi pi-check-circle"
-                    styleClass="p-button-rounded p-button-text p-button-success"
-                    (onClick)="unblockDoctor(doc)"
-                    pTooltip="Unblock Doctor"
-                    tooltipPosition="top">
-                  </p-button>
-                  <p-button icon="pi pi-pencil" styleClass="p-button-rounded p-button-text p-button-secondary" (onClick)="openEditModal(doc)" pTooltip="Edit Profile" tooltipPosition="top"></p-button>
-                </ng-container>
-              </div>
-            </div>
-          </ng-template>
-        </p-card>
+      <div class="col-12 md:col-6 lg:col-4 xl:col-4 p-3 animate-fade-in" *ngFor="let doc of filteredDoctors">
+        <app-doctor-card
+          [doctor]="doc"
+          [isAdmin]="isAdmin"
+          [isPatient]="isPatient"
+          (book)="openBookingDialog($event)"
+          (view)="viewDoctor($event)"
+          (block)="openBlockModal($event)"
+          (unblock)="unblockDoctor($event)"
+          (edit)="openEditModal($event)">
+        </app-doctor-card>
       </div>
     </div>
   </div>
@@ -203,10 +130,34 @@
     <!-- Doctor Hero Banner (Directly inside shell so it spans full width without dialog-body's padding) -->
     <div *ngIf="bookingDoctor" class="booking-hero-section">
       <div class="booking-hero-content">
-        <p-avatar [label]="bookingDoctor.name.charAt(0)" shape="circle" size="xlarge" styleClass="booking-avatar-large"></p-avatar>
+        <div class="booking-hero-avatar-container">
+          <img
+            *ngIf="bookingDoctor && !bookingDoctorImageError"
+            [src]="getDoctorAvatar(bookingDoctor)"
+            [alt]="bookingDoctor.name"
+            class="booking-hero-img"
+            (error)="onBookingDoctorImageError()" />
+          
+          <svg
+            *ngIf="bookingDoctor && bookingDoctorImageError"
+            class="booking-hero-fallback-svg"
+            viewBox="0 0 100 100"
+            xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bookingBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3B82F6"/>
+                <stop offset="100%" stop-color="#2563EB"/>
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="50" fill="url(#bookingBgGrad)"/>
+            <path d="M50,22 C59.4,22 67,29.6 67,39 C67,48.4 59.4,56 50,56 C40.6,56 33,48.4 33,39 C33,29.6 40.6,22 50,22 Z M50,60 C68.2,60 83,72.1 83,87 L17,87 C17,72.1 31.8,60 50,60 Z" fill="#FFFFFF" opacity="0.95"/>
+            <path d="M43,54 C43,54 44.5,59 50,59 C55.5,59 57,54 57,54" stroke="#DBEAFE" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <circle cx="50" cy="65" r="4" fill="#F8FAFC"/>
+          </svg>
+        </div>
         <div class="booking-doctor-info">
           <div class="booking-doctor-header">
-            <h3 class="booking-doctor-name">Dr. {{ bookingDoctor.name }}</h3>
+            <h3 class="booking-doctor-name">Dr. {{ cleanDoctorName(bookingDoctor.name) }}</h3>
             <span class="availability-badge" [class.available-today]="bookingDoctor.availability === 'Available Today'">
               <i class="pi pi-clock mr-1"></i>{{ bookingDoctor.availability }}
             </span>
@@ -272,7 +223,7 @@
   <!-- ===== BLOCK MODAL ===== -->
   <app-block-user-modal
     [visible]="displayBlockModal"
-    [targetName]="selectedDoctor?.name"
+    [targetName]="cleanDoctorName(selectedDoctor?.name || '')"
     [loading]="blockLoading"
     (confirm)="executeBlock($event)"
     (cancel)="displayBlockModal = false">
@@ -281,10 +232,11 @@
   <!-- ===== DOCTOR DETAILS DRAWER ===== -->
   <app-details-drawer
     [visible]="displayDrawer"
-    [title]="'Dr. ' + (selectedDoctor?.name || '')"
+    [title]="'Dr. ' + cleanDoctorName(selectedDoctor?.name || '')"
     [subtitle]="selectedDoctor?.userStatus || 'ACTIVE'"
     [badgeType]="(selectedDoctor?.userStatus || 'ACTIVE').toLowerCase()"
     [avatarLabel]="selectedDoctor?.name?.charAt(0) || 'D'"
+    [avatarUrl]="getDoctorAvatar(selectedDoctor)"
     (close)="displayDrawer = false">
 
     <div class="drawer-section">

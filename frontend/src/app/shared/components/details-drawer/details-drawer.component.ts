@@ -17,7 +17,31 @@ import { SharedPrimeNgModule } from '../../primeng.module';
       <ng-template pTemplate="header">
         <div class="drawer-header">
           <div class="drawer-avatar">
+            <img
+              *ngIf="avatarUrl && !imageError"
+              [src]="avatarUrl"
+              class="drawer-avatar-img"
+              (error)="imageError = true" />
+            
+            <svg
+              *ngIf="avatarUrl && imageError"
+              class="drawer-avatar-fallback-svg"
+              viewBox="0 0 100 100"
+              xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="drawerBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#3B82F6"/>
+                  <stop offset="100%" stop-color="#2563EB"/>
+                </linearGradient>
+              </defs>
+              <circle cx="50" cy="50" r="50" fill="url(#drawerBgGrad)"/>
+              <path d="M50,22 C59.4,22 67,29.6 67,39 C67,48.4 59.4,56 50,56 C40.6,56 33,48.4 33,39 C33,29.6 40.6,22 50,22 Z M50,60 C68.2,60 83,72.1 83,87 L17,87 C17,72.1 31.8,60 50,60 Z" fill="#FFFFFF" opacity="0.95"/>
+              <path d="M43,54 C43,54 44.5,59 50,59 C55.5,59 57,54 57,54" stroke="#DBEAFE" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <circle cx="50" cy="65" r="4" fill="#F8FAFC"/>
+            </svg>
+
             <p-avatar
+              *ngIf="!avatarUrl"
               [label]="avatarLabel"
               shape="circle"
               size="xlarge"
@@ -92,6 +116,21 @@ import { SharedPrimeNgModule } from '../../primeng.module';
       font-weight: 700 !important;
       font-size: 1.5rem !important;
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    }
+
+    .drawer-avatar-img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border-color);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    }
+
+    .drawer-avatar-fallback-svg {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
     }
 
     .drawer-header-text {
@@ -176,7 +215,10 @@ export class DetailsDrawerComponent {
   @Input() subtitle = '';
   @Input() badgeType = 'default';
   @Input() avatarLabel = '?';
+  @Input() avatarUrl = '';
 
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() close = new EventEmitter<void>();
+
+  imageError = false;
 }

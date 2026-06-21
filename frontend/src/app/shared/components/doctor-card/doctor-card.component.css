@@ -1,0 +1,242 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.doctor-card {
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 20px;
+  padding: 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.25s ease;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.doctor-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.05));
+  border-color: var(--primary-color, #2563EB) !important;
+}
+
+.blocked-card {
+  opacity: 0.75;
+  border-style: dashed;
+  border-color: var(--danger-color, #EF4444) !important;
+}
+
+/* Header Section */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  width: 100%;
+}
+
+.availability-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--primary-color, #2563EB);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.availability-badge.available-today {
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success-text, #15803D);
+}
+
+.badge-icon {
+  margin-right: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.star-icon {
+  color: #f59e0b;
+  font-size: 0.75rem;
+}
+
+.rating-value {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--text-main, #0f172a);
+}
+
+.rating-count {
+  font-size: 0.75rem;
+  color: var(--text-muted, #64748b);
+}
+
+/* Hero Section */
+.card-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.avatar-wrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 0.75rem;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, var(--primary-color, #2563EB) 0%, var(--secondary-color, #3B82F6) 100%);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doctor-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  background: var(--bg-main, #f8fafc);
+  border: 2px solid var(--card-bg, #ffffff);
+  box-sizing: border-box;
+}
+
+.doctor-fallback-svg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--card-bg, #ffffff);
+  box-sizing: border-box;
+}
+
+.status-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--card-bg, #ffffff);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.active-dot {
+  background: var(--success-color, #22C55E);
+}
+
+.blocked-dot {
+  background: var(--danger-color, #EF4444);
+}
+
+.doctor-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+  margin: 0 0 0.35rem 0;
+  letter-spacing: -0.01em;
+}
+
+.speciality-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary-color, #2563EB);
+  background: rgba(37, 99, 235, 0.08);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+.p-dark .speciality-badge {
+  color: #60a5fa;
+  background: rgba(37, 99, 235, 0.2);
+}
+
+/* Details Section */
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--text-muted, #64748b);
+}
+
+.detail-icon {
+  font-size: 0.85rem;
+  color: var(--primary-color, #2563EB);
+  flex-shrink: 0;
+}
+
+.p-dark .detail-icon {
+  color: #60a5fa;
+}
+
+.detail-text {
+  color: var(--text-main, #0f172a);
+  font-weight: 500;
+  text-align: left;
+}
+
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 175px;
+}
+
+/* Actions Section */
+.card-actions {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light, #f1f5f9);
+  width: 100%;
+}
+
+.p-dark .card-actions {
+  border-top-color: var(--border-light, #334155);
+}
+
+.book-btn {
+  width: 100% !important;
+  justify-content: center !important;
+}
+
+.admin-action-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+::ng-deep .action-icon-btn.p-button {
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}

@@ -20,6 +20,7 @@ import { DialogBodyComponent } from '../../../shared/components/dialog-body/dial
 import { BlockUserModalComponent, BlockConfirmEvent } from '../../../shared/components/block-user-modal/block-user-modal.component';
 import { DetailsDrawerComponent } from '../../../shared/components/details-drawer/details-drawer.component';
 import { DialogFooterComponent } from '../../../shared/components/dialog-footer/dialog-footer.component';
+import { DoctorCardComponent } from '../../../shared/components/doctor-card/doctor-card.component';
 
 @Component({
   selector: 'app-doctor-list',
@@ -40,7 +41,8 @@ import { DialogFooterComponent } from '../../../shared/components/dialog-footer/
     DialogBodyComponent,
     BlockUserModalComponent,
     DetailsDrawerComponent,
-    DialogFooterComponent
+    DialogFooterComponent,
+    DoctorCardComponent
   ],
   templateUrl: './doctor-list.component.html',
   styleUrls: ['./doctor-list.component.css'],
@@ -270,6 +272,7 @@ export class DoctorListComponent implements OnInit {
 
   openBookingDialog(doctor: any): void {
     this.bookingDoctor = doctor;
+    this.bookingDoctorImageError = false;
     this.bookingForm.reset({ date: null, time: '', reason: '' });
     this.displayBookingDialog = true;
   }
@@ -308,5 +311,43 @@ export class DoctorListComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Booking Failed', detail: err || 'Failed to book appointment.' });
       }
     });
+  }
+
+  bookingDoctorImageError = false;
+
+  onBookingDoctorImageError(): void {
+    this.bookingDoctorImageError = true;
+  }
+
+  avatarUrls = [
+    'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=256&h=256&q=80', // female
+    'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=256&h=256&q=80', // male
+    'https://images.unsplash.com/photo-1594824813573-246434de83fb?auto=format&fit=crop&w=256&h=256&q=80', // female
+    'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=256&h=256&q=80', // male
+    'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=256&h=256&q=80', // male
+    'https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?auto=format&fit=crop&w=256&h=256&q=80', // male
+    'https://images.unsplash.com/photo-1582750433449-649350141f2f?auto=format&fit=crop&w=256&h=256&q=80', // female
+    'https://images.unsplash.com/photo-1622902046580-2b47f47f0471?auto=format&fit=crop&w=256&h=256&q=80'  // female
+  ];
+
+  getDoctorAvatar(doctor: any): string {
+    if (!doctor) return '';
+    if (doctor.avatarUrl) {
+      return doctor.avatarUrl;
+    }
+    const idx = (doctor.id || 0) % this.avatarUrls.length;
+    return this.avatarUrls[idx];
+  }
+
+  cleanDoctorName(name: string): string {
+    if (!name) return '';
+    let cleaned = name.trim();
+    while (cleaned.toLowerCase().startsWith('dr.')) {
+      cleaned = cleaned.substring(3).trim();
+    }
+    while (cleaned.toLowerCase().startsWith('dr ')) {
+      cleaned = cleaned.substring(3).trim();
+    }
+    return cleaned;
   }
 }

@@ -142,14 +142,35 @@
   gap: 20px;
 }
 
-::ng-deep .booking-avatar-large {
-  width: 64px !important;
-  height: 64px !important;
-  background-color: var(--primary-color) !important;
-  color: #ffffff !important;
-  font-size: 1.5rem !important;
-  font-weight: 700 !important;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
+.booking-hero-avatar-container {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, var(--primary-color, #2563EB) 0%, var(--secondary-color, #3B82F6) 100%);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.booking-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--card-bg, #ffffff);
+  box-sizing: border-box;
+}
+
+.booking-hero-fallback-svg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--card-bg, #ffffff);
+  box-sizing: border-box;
 }
 
 .booking-doctor-info {
