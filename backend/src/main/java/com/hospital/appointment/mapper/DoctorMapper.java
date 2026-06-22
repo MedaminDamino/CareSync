@@ -13,6 +13,9 @@ public class DoctorMapper {
                 .phone(doctor.getPhone())
                 .speciality(SpecialityMapper.toDTO(doctor.getSpeciality()))
                 .userId(doctor.getUser() != null ? doctor.getUser().getId() : null)
+                .verified(doctor.isVerified())
+                .userStatus(doctor.getUser() != null && doctor.getUser().getStatus() != null ? doctor.getUser().getStatus().name() : "ACTIVE")
+                .blockReason(doctor.getUser() != null ? doctor.getUser().getBlockReason() : null)
                 .build();
     }
 
@@ -24,6 +27,7 @@ public class DoctorMapper {
                 .email(dto.getEmail())
                 .phone(dto.getPhone())
                 .speciality(SpecialityMapper.toEntity(dto.getSpeciality()))
+                .verified(dto.isVerified())
                 .build();
     }
 }

@@ -107,6 +107,17 @@
       </div>
     </header>
 
+    <!-- Verification Alert Banner -->
+    <div *ngIf="currentUser && !isVerified" class="flex align-items-center justify-content-between p-3 bg-warning-light border-round-lg mb-3 mx-4 mt-3" style="border: 1px solid var(--warning-color);">
+      <div class="flex align-items-center gap-2">
+        <i class="pi pi-exclamation-triangle text-warning text-lg"></i>
+        <div>
+          <span class="font-semibold text-warning">Account Pending Acceptance:</span>
+          <span class="text-sm text-main ml-1">Your account is currently under review by our administrators. Some features will be restricted until your profile is accepted.</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Page Container -->
     <main class="page-container">
       <router-outlet></router-outlet>

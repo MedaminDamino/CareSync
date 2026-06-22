@@ -17,11 +17,10 @@ public class DoctorController {
     private DoctorService doctorService;
 
     @GetMapping
-    public ResponseEntity<List<DoctorDTO>> getAllDoctors(@RequestParam(required = false) Long specialityId) {
-        if (specialityId != null) {
-            return ResponseEntity.ok(doctorService.getDoctorsBySpeciality(specialityId));
-        }
-        return ResponseEntity.ok(doctorService.getAllDoctors());
+    public ResponseEntity<List<DoctorDTO>> getAllDoctors(
+            @RequestParam(required = false) Long specialityId,
+            @RequestParam(required = false) Boolean verified) {
+        return ResponseEntity.ok(doctorService.getDoctors(specialityId, verified));
     }
 
     @GetMapping("/{id}")
@@ -39,6 +38,12 @@ public class DoctorController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DoctorDTO> updateDoctor(@PathVariable Long id, @Valid @RequestBody DoctorDTO doctorDTO) {
         return ResponseEntity.ok(doctorService.updateDoctor(id, doctorDTO));
+    }
+
+    @PutMapping("/{id}/verify")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<DoctorDTO> verifyDoctor(@PathVariable Long id, @RequestParam boolean verified) {
+        return ResponseEntity.ok(doctorService.verifyDoctor(id, verified));
     }
 
     @DeleteMapping("/{id}")

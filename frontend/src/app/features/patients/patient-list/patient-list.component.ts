@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { SharedPrimeNgModule } from '../../../shared/primeng.module';
 import { PatientService } from '../../../core/services/patient.service';
@@ -22,6 +22,7 @@ import { DialogFooterComponent } from '../../../shared/components/dialog-footer/
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     SharedPrimeNgModule,
     PageHeaderComponent,
     EmptyStateComponent,
@@ -41,6 +42,12 @@ import { DialogFooterComponent } from '../../../shared/components/dialog-footer/
 export class PatientListComponent implements OnInit {
   patients: any[] = [];
   filteredPatients: any[] = [];
+  selectedVerificationStatus: boolean | null = null;
+  verificationOptions = [
+    { label: 'All Acceptance Statuses', value: null },
+    { label: 'Accepted Only', value: true },
+    { label: 'Not Accepted Only', value: false }
+  ];
   searchQuery = '';
   loading = true;
   saving = false;
@@ -76,7 +83,8 @@ export class PatientListComponent implements OnInit {
 
   loadPatients(): void {
     this.loading = true;
-    this.patientService.getAll().subscribe({
+    const verified = this.selectedVerificationStatus !== null ? this.selectedVerificationStatus : undefined;
+    this.patientService.getAll(verified).subscribe({
       next: (data) => {
         this.patients = data;
         this.applySearchFilter();
@@ -187,6 +195,23 @@ export class PatientListComponent implements OnInit {
       },
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Unblock Failed', detail: err || 'Failed to unblock user.' });
+      }
+    });
+  }
+
+  filterByVerification(verifiedStatus: any): void {
+    this.selectedVerificationStatus = verifiedStatus;
+    this.loadPatients();
+  }
+
+  verifyPatient(patient: any): void {
+    this.patientService.verify(patient.id, true).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Patient Accepted', detail: `${patient.name} has been accepted.` });
+        this.loadPatients();
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Acceptance Failed', detail: err?.message || 'Failed to accept patient.' });
       }
     });
   }

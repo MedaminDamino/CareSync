@@ -11,12 +11,19 @@ export class DoctorService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(specialityId?: number): Observable<any[]> {
+  getAll(specialityId?: number, verified?: boolean): Observable<any[]> {
     let params = new HttpParams();
     if (specialityId) {
       params = params.set('specialityId', specialityId.toString());
     }
+    if (verified !== undefined && verified !== null) {
+      params = params.set('verified', verified.toString());
+    }
     return this.http.get<any[]>(this.baseUrl, { params });
+  }
+
+  verify(id: number, verified: boolean): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/${id}/verify?verified=${verified}`, {});
   }
 
   getById(id: number): Observable<any> {

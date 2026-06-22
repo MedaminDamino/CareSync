@@ -63,22 +63,29 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Long profileId = null;
+        boolean verified = true; // Admin is verified by default
         if (user.getRole() == Role.DOCTOR) {
-            profileId = doctorRepository.findByUserId(user.getId())
-                    .map(Doctor::getId)
+            Doctor doc = doctorRepository.findByUserId(user.getId())
                     .orElse(null);
+            if (doc != null) {
+                profileId = doc.getId();
+                verified = doc.isVerified();
+            }
         } else if (user.getRole() == Role.PATIENT) {
-            profileId = patientRepository.findByUserId(user.getId())
-                    .map(Patient::getId)
+            Patient pat = patientRepository.findByUserId(user.getId())
                     .orElse(null);
+            if (pat != null) {
+                profileId = pat.getId();
+                verified = pat.isVerified();
+            }
         }
 
-        return new AuthResponse(jwt, user.getEmail(), user.getRole(), profileId);
+        return new AuthResponse(jwt, user.getEmail(), user.getRole(), profileId, verified);
     }
 
     @Override
     @Transactional
-    public void register(RegisterRequest registerRequest) {
+    public AuthResponse register(RegisterRequest registerRequest) {
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
             throw new BadRequestException("Email is already taken!");
         }
@@ -89,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
                 .role(registerRequest.getRole())
                 .build();
 
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
 
         if (registerRequest.getRole() == Role.DOCTOR) {
             if (registerRequest.getSpecialityId() == null) {
@@ -106,7 +113,7 @@ public class AuthServiceImpl implements AuthService {
                     .user(user)
                     .build();
 
-            doctorRepository.save(doctor);
+            doctorRepository.saveAndFlush(doctor);
         } else if (registerRequest.getRole() == Role.PATIENT) {
             if (registerRequest.getDateOfBirth() == null) {
                 throw new BadRequestException("Patient date of birth is required!");
@@ -119,9 +126,11 @@ public class AuthServiceImpl implements AuthService {
                     .user(user)
                     .build();
 
-            patientRepository.save(patient);
+            patientRepository.saveAndFlush(patient);
         } else {
             throw new BadRequestException("Invalid role registration requested!");
         }
+
+        return login(new LoginRequest(registerRequest.getEmail(), registerRequest.getPassword()));
     }
 }

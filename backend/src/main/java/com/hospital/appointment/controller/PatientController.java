@@ -18,8 +18,8 @@ public class PatientController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
-    public ResponseEntity<List<PatientDTO>> getAllPatients() {
-        return ResponseEntity.ok(patientService.getAllPatients());
+    public ResponseEntity<List<PatientDTO>> getAllPatients(@RequestParam(required = false) Boolean verified) {
+        return ResponseEntity.ok(patientService.getPatients(verified));
     }
 
     @GetMapping("/{id}")
@@ -38,6 +38,12 @@ public class PatientController {
     @PreAuthorize("hasAnyRole('ADMIN', 'PATIENT')")
     public ResponseEntity<PatientDTO> updatePatient(@PathVariable Long id, @Valid @RequestBody PatientDTO patientDTO) {
         return ResponseEntity.ok(patientService.updatePatient(id, patientDTO));
+    }
+
+    @PutMapping("/{id}/verify")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PatientDTO> verifyPatient(@PathVariable Long id, @RequestParam boolean verified) {
+        return ResponseEntity.ok(patientService.verifyPatient(id, verified));
     }
 
     @DeleteMapping("/{id}")

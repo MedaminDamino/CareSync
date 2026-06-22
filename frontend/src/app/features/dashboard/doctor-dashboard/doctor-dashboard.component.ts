@@ -21,6 +21,7 @@ export class DoctorDashboardComponent implements OnInit {
   appointments: any[] = [];
   loading = true;
   doctorId!: number;
+  isVerified = true;
 
   constructor(
     private appointmentService: AppointmentService,
@@ -32,6 +33,7 @@ export class DoctorDashboardComponent implements OnInit {
     const user = this.authService.currentUserValue;
     if (user && user.profileId) {
       this.doctorId = user.profileId;
+      this.isVerified = user.verified ?? true;
       this.loadAppointments();
     } else {
       this.loading = false;

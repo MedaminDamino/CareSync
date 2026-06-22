@@ -14,6 +14,17 @@
         (search)="onSearch($event)"
         class="w-full md:w-24rem">
       </app-search-bar>
+      <p-select
+        [options]="verificationOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Filter by Acceptance"
+        [(ngModel)]="selectedVerificationStatus"
+        (onChange)="filterByVerification($event.value)"
+        [showClear]="true"
+        class="w-full md:w-18rem filter-select"
+        styleClass="w-full">
+      </p-select>
     </div>
   </app-action-toolbar>
 
@@ -40,7 +51,8 @@
             <th>Phone</th>
             <th>Date of Birth</th>
             <th>Status</th>
-            <th style="width: 160px;">Actions</th>
+            <th>Acceptance</th>
+            <th style="width: 180px;">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-patient>
@@ -68,7 +80,21 @@
               </span>
             </td>
             <td>
+              <span class="status-badge" [class.status-completed]="patient.verified" [class.status-pending]="!patient.verified">
+                <i class="pi mr-1" [class.pi-verified]="patient.verified" [class.pi-clock]="!patient.verified"></i>
+                {{ patient.verified ? 'Accepted' : 'Not Accepted' }}
+              </span>
+            </td>
+            <td>
               <div class="flex gap-1">
+                <p-button
+                  *ngIf="!patient.verified"
+                  icon="pi pi-check-circle"
+                  styleClass="p-button-rounded p-button-text p-button-success"
+                  (click)="verifyPatient(patient)"
+                  pTooltip="Accept Patient"
+                  tooltipPosition="top">
+                </p-button>
                 <p-button
                   icon="pi pi-eye"
                   styleClass="p-button-rounded p-button-text p-button-info"

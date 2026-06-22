@@ -101,14 +101,31 @@ export class RegisterComponent implements OnInit {
     }
 
     this.authService.register(formValue).subscribe({
-      next: () => {
+      next: (response) => {
         this.loading = false;
-        this.messageService.add({ 
-          severity: 'success', 
-          summary: 'Registration Successful', 
-          detail: 'Account created! Please log in.' 
-        });
-        this.router.navigate(['/login']);
+        if (response.verified) {
+          this.authService.saveSession(response);
+          this.messageService.add({ 
+            severity: 'success', 
+            summary: 'Welcome to CareSync!', 
+            detail: 'Registration successful. Automatically logged in.' 
+          });
+          
+          if (response.role === 'ADMIN') {
+            this.router.navigate(['/dashboard/admin']);
+          } else if (response.role === 'DOCTOR') {
+            this.router.navigate(['/dashboard/doctor']);
+          } else if (response.role === 'PATIENT') {
+            this.router.navigate(['/dashboard/patient']);
+          }
+        } else {
+          this.messageService.add({ 
+            severity: 'success', 
+            summary: 'Registration Successful', 
+            detail: 'Account created! Pending verification.' 
+          });
+          this.router.navigate(['/pending-verification']);
+        }
       },
       error: (err) => {
         this.loading = false;

@@ -19,6 +19,7 @@ export class DoctorCardComponent {
   @Output() block = new EventEmitter<any>();
   @Output() unblock = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
+  @Output() verify = new EventEmitter<any>();
 
   imageError = false;
 

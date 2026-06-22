@@ -20,6 +20,15 @@
         (filter)="filterBySpeciality($event)"
         class="w-full md:w-18rem">
       </app-filter-bar>
+      <app-filter-bar *ngIf="isAdmin"
+        [options]="verificationOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Filter by Acceptance"
+        [filterValue]="selectedVerificationStatus"
+        (filter)="filterByVerification($event)"
+        class="w-full md:w-18rem">
+      </app-filter-bar>
     </div>
     <div actions>
       <p-button *ngIf="isAdmin" label="Add Doctor" icon="pi pi-user-plus" (click)="openCreateModal()" styleClass="p-button-primary"></p-button>
@@ -52,6 +61,7 @@
           (view)="viewDoctor($event)"
           (block)="openBlockModal($event)"
           (unblock)="unblockDoctor($event)"
+          (verify)="verifyDoctor($event)"
           (edit)="openEditModal($event)">
         </app-doctor-card>
       </div>

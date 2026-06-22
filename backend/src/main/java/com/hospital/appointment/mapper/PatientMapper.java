@@ -13,6 +13,10 @@ public class PatientMapper {
                 .phone(patient.getPhone())
                 .dateOfBirth(patient.getDateOfBirth())
                 .userId(patient.getUser() != null ? patient.getUser().getId() : null)
+                .verified(patient.isVerified())
+                .userStatus(patient.getUser() != null && patient.getUser().getStatus() != null ? patient.getUser().getStatus().name() : "ACTIVE")
+                .blockReason(patient.getUser() != null ? patient.getUser().getBlockReason() : null)
+                .blockedAt(patient.getUser() != null ? patient.getUser().getBlockedAt() : null)
                 .build();
     }
 
@@ -24,6 +28,7 @@ public class PatientMapper {
                 .email(dto.getEmail())
                 .phone(dto.getPhone())
                 .dateOfBirth(dto.getDateOfBirth())
+                .verified(dto.isVerified())
                 .build();
     }
 }

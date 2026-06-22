@@ -25,10 +25,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@Valid @RequestBody RegisterRequest registerRequest) {
-        authService.register(registerRequest);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "User registered successfully!");
-        return ResponseEntity.ok(response);
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
+        AuthResponse authResponse = authService.register(registerRequest);
+        return ResponseEntity.ok(authResponse);
     }
 }

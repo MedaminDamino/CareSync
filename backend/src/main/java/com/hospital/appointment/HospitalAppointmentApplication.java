@@ -13,6 +13,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,8 +33,23 @@ public class HospitalAppointmentApplication {
             DoctorRepository doctorRepository,
             PatientRepository patientRepository,
             AppointmentRepository appointmentRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            JdbcTemplate jdbcTemplate) {
         return args -> {
+            // 0. Run database migration for existing doctors and patients if needed
+            try {
+                jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS db_migrations (migration_name VARCHAR(255) PRIMARY KEY)");
+                List<String> runs = jdbcTemplate.queryForList("SELECT migration_name FROM db_migrations WHERE migration_name = 'verify_existing_users'", String.class);
+                if (runs.isEmpty()) {
+                    jdbcTemplate.execute("UPDATE doctors SET verified = true");
+                    jdbcTemplate.execute("UPDATE patients SET verified = true");
+                    jdbcTemplate.execute("INSERT INTO db_migrations (migration_name) VALUES ('verify_existing_users')");
+                    System.out.println("One-time data migration 'verify_existing_users' executed successfully.");
+                }
+            } catch (Exception e) {
+                System.err.println("Migration failed: " + e.getMessage());
+            }
+
             // 1. Seed admin if not present
             if (!userRepository.existsByEmail("admin@hospital.com")) {
                 User admin = User.builder()
@@ -85,6 +101,7 @@ public class HospitalAppointmentApplication {
                         .phone("555-0101")
                         .speciality(cardiology)
                         .user(docUser1)
+                        .verified(true)
                         .build();
                 doctorRepository.save(doctor1);
 
@@ -101,6 +118,7 @@ public class HospitalAppointmentApplication {
                         .phone("555-0102")
                         .speciality(pediatrics)
                         .user(docUser2)
+                        .verified(true)
                         .build();
                 doctorRepository.save(doctor2);
 
@@ -117,6 +135,7 @@ public class HospitalAppointmentApplication {
                         .phone("555-0103")
                         .speciality(neurology)
                         .user(docUser3)
+                        .verified(true)
                         .build();
                 doctorRepository.save(doctor3);
             }
@@ -136,6 +155,7 @@ public class HospitalAppointmentApplication {
                         .phone("555-0201")
                         .dateOfBirth(LocalDate.of(1990, 5, 15))
                         .user(patUser1)
+                        .verified(true)
                         .build();
                 patientRepository.save(patient1);
 
@@ -152,6 +172,7 @@ public class HospitalAppointmentApplication {
                         .phone("555-0202")
                         .dateOfBirth(LocalDate.of(1995, 8, 22))
                         .user(patUser2)
+                        .verified(true)
                         .build();
                 patientRepository.save(patient2);
             }

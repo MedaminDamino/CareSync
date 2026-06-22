@@ -53,6 +53,12 @@ export class DoctorListComponent implements OnInit {
   filteredDoctors: any[] = [];
   specialities: any[] = [];
   selectedSpecialityId: number | null = null;
+  selectedVerificationStatus: boolean | null = null;
+  verificationOptions = [
+    { label: 'All Acceptance Statuses', value: null },
+    { label: 'Accepted Only', value: true },
+    { label: 'Not Accepted Only', value: false }
+  ];
   searchQuery = '';
   loading = true;
   userRole!: string;
@@ -118,7 +124,9 @@ export class DoctorListComponent implements OnInit {
 
   loadDoctors(): void {
     this.loading = true;
-    this.doctorService.getAll(this.selectedSpecialityId || undefined).subscribe({
+    const specId = this.selectedSpecialityId || undefined;
+    const verified = this.selectedVerificationStatus !== null ? this.selectedVerificationStatus : undefined;
+    this.doctorService.getAll(specId, verified).subscribe({
       next: (data) => {
         this.doctors = data.map((doc: any) => ({
           ...doc,
@@ -271,10 +279,36 @@ export class DoctorListComponent implements OnInit {
   }
 
   openBookingDialog(doctor: any): void {
+    const user = this.authService.currentUserValue;
+    if (user && !user.verified && this.userRole === 'PATIENT') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Verification Required',
+        detail: 'Your account must be verified before booking appointments.'
+      });
+      return;
+    }
     this.bookingDoctor = doctor;
     this.bookingDoctorImageError = false;
     this.bookingForm.reset({ date: null, time: '', reason: '' });
     this.displayBookingDialog = true;
+  }
+
+  filterByVerification(verifiedStatus: any): void {
+    this.selectedVerificationStatus = verifiedStatus;
+    this.loadDoctors();
+  }
+
+  verifyDoctor(doctor: any): void {
+    this.doctorService.verify(doctor.id, true).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Doctor Accepted', detail: `Dr. ${doctor.name} has been accepted.` });
+        this.loadDoctors();
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Acceptance Failed', detail: err?.message || 'Failed to accept doctor.' });
+      }
+    });
   }
 
   bookAppointment(): void {

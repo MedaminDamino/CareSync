@@ -31,4 +31,8 @@ export class UserService {
   unblockUser(userId: number): Observable<any> {
     return this.http.patch<any>(`${this.baseUrl}/${userId}/unblock`, {});
   }
+
+  getMyProfile(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/me`);
+  }
 }

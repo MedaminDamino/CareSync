@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_URL } from './api.config';
 
@@ -11,8 +11,16 @@ export class PatientService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<any[]> {
-    return this.http.get<any[]>(this.baseUrl);
+  getAll(verified?: boolean): Observable<any[]> {
+    let params = new HttpParams();
+    if (verified !== undefined && verified !== null) {
+      params = params.set('verified', verified.toString());
+    }
+    return this.http.get<any[]>(this.baseUrl, { params });
+  }
+
+  verify(id: number, verified: boolean): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/${id}/verify?verified=${verified}`, {});
   }
 
   getById(id: number): Observable<any> {

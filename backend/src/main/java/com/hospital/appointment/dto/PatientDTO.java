@@ -27,4 +27,8 @@ public class PatientDTO {
     private LocalDate dateOfBirth;
 
     private Long userId;
+    private boolean verified;
+    private String userStatus;
+    private String blockReason;
+    private java.time.LocalDateTime blockedAt;
 }

@@ -51,6 +51,12 @@
     <span class="speciality-badge">
       {{ doctor.speciality?.name || 'General Practitioner' }}
     </span>
+    <div class="mt-2">
+      <span class="status-badge" [class.status-completed]="doctor.verified" [class.status-pending]="!doctor.verified">
+        <i class="pi mr-1" [class.pi-verified]="doctor.verified" [class.pi-clock]="!doctor.verified"></i>
+        {{ doctor.verified ? 'Accepted' : 'Not Accepted' }}
+      </span>
+    </div>
   </div>
 
   <!-- Info Section: Experience, Email, Phone -->
@@ -81,16 +87,24 @@
       styleClass="p-button-outlined p-button-primary book-btn"
       (onClick)="book.emit(doctor)">
     </p-button>
-
-    <!-- Admin Buttons -->
-    <div *ngIf="isAdmin" class="admin-action-row">
-      <p-button
-        icon="pi pi-eye"
-        styleClass="p-button-rounded p-button-text p-button-info action-icon-btn"
-        (onClick)="view.emit(doctor)"
-        pTooltip="View Profile"
-        tooltipPosition="top">
-      </p-button>
+ 
+     <!-- Admin Buttons -->
+     <div *ngIf="isAdmin" class="admin-action-row">
+       <p-button
+         *ngIf="!doctor.verified"
+         icon="pi pi-check-circle"
+         styleClass="p-button-rounded p-button-text p-button-success action-icon-btn"
+         (onClick)="verify.emit(doctor)"
+         pTooltip="Accept Doctor"
+         tooltipPosition="top">
+       </p-button>
+       <p-button
+         icon="pi pi-eye"
+         styleClass="p-button-rounded p-button-text p-button-info action-icon-btn"
+         (onClick)="view.emit(doctor)"
+         pTooltip="View Profile"
+         tooltipPosition="top">
+       </p-button>
       <p-button
         *ngIf="!doctor.userStatus || doctor.userStatus === 'ACTIVE'"
         icon="pi pi-ban"

@@ -27,11 +27,11 @@
             </td>
             <td>
               <div class="flex gap-2" *ngIf="apt.status === 'PENDING'">
-                <p-button icon="pi pi-check" styleClass="p-button-rounded p-button-primary p-button-text p-button-sm" (onClick)="updateStatus(apt.id, 'ACCEPTED')" pTooltip="Accept"></p-button>
-                <p-button icon="pi pi-times" styleClass="p-button-rounded p-button-danger p-button-text p-button-sm" (onClick)="updateStatus(apt.id, 'REJECTED')" pTooltip="Reject"></p-button>
+                <p-button [disabled]="!isVerified" icon="pi pi-check" styleClass="p-button-rounded p-button-primary p-button-text p-button-sm" (onClick)="updateStatus(apt.id, 'ACCEPTED')" pTooltip="Accept"></p-button>
+                <p-button [disabled]="!isVerified" icon="pi pi-times" styleClass="p-button-rounded p-button-danger p-button-text p-button-sm" (onClick)="updateStatus(apt.id, 'REJECTED')" pTooltip="Reject"></p-button>
               </div>
               <div class="flex gap-2" *ngIf="apt.status === 'ACCEPTED'">
-                <p-button icon="pi pi-check-square" styleClass="p-button-rounded p-button-info p-button-text p-button-sm" (onClick)="updateStatus(apt.id, 'COMPLETED')" pTooltip="Mark Completed"></p-button>
+                <p-button [disabled]="!isVerified" icon="pi pi-check-square" styleClass="p-button-rounded p-button-info p-button-text p-button-sm" (onClick)="updateStatus(apt.id, 'COMPLETED')" pTooltip="Mark Completed"></p-button>
               </div>
             </td>
           </tr>

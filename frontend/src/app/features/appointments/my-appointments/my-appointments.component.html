@@ -1,7 +1,7 @@
 <div class="fade-in-up">
   <app-page-header title="My Appointment History" subtitle="View and manage all your past and upcoming appointments">
     <div actions>
-      <p-button label="Book New Appointment" icon="pi pi-calendar-plus" routerLink="/doctors" styleClass="p-button-primary"></p-button>
+      <p-button label="Book New Appointment" icon="pi pi-calendar-plus" [routerLink]="isVerified ? '/doctors' : null" [disabled]="!isVerified" styleClass="p-button-primary"></p-button>
     </div>
   </app-page-header>
 
@@ -66,7 +66,7 @@
             </div>
 
             <div class="mt-auto pt-3 border-top-1 border-surface" *ngIf="apt.status === 'PENDING'">
-              <p-button label="Cancel Appointment" icon="pi pi-times" styleClass="p-button-outlined p-button-danger w-full" (onClick)="cancelAppointment(apt.id)"></p-button>
+              <p-button [disabled]="!isVerified" label="Cancel Appointment" icon="pi pi-times" styleClass="p-button-outlined p-button-danger w-full" (onClick)="cancelAppointment(apt.id)"></p-button>
             </div>
 
             <div class="mt-auto pt-3 border-top-1 border-surface" *ngIf="apt.status === 'ACCEPTED'">

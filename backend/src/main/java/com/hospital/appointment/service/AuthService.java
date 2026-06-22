@@ -6,5 +6,5 @@ import com.hospital.appointment.dto.RegisterRequest;
 
 public interface AuthService {
     AuthResponse login(LoginRequest loginRequest);
-    void register(RegisterRequest registerRequest);
+    AuthResponse register(RegisterRequest registerRequest);
 }

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
+import { PendingVerificationComponent } from './features/auth/pending-verification/pending-verification.component';
 import { LayoutComponent } from './features/layout/layout.component';
 import { AdminDashboardComponent } from './features/dashboard/admin-dashboard/admin-dashboard.component';
 import { DoctorDashboardComponent } from './features/dashboard/doctor-dashboard/doctor-dashboard.component';
@@ -16,6 +17,7 @@ import { roleGuard } from './core/guards/role.guard';
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'pending-verification', component: PendingVerificationComponent },
   {
     path: '',
     component: LayoutComponent,

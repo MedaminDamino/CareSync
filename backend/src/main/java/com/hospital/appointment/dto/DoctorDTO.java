@@ -26,4 +26,7 @@ public class DoctorDTO {
     private SpecialityDTO speciality;
 
     private Long userId;
+    private boolean verified;
+    private String userStatus;
+    private String blockReason;
 }

@@ -22,8 +22,6 @@ export class ThemeService {
 
       if (savedTheme !== null) {
         prefersDark = savedTheme === 'true';
-      } else {
-        prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       }
 
       this.isDarkModeSubject.next(prefersDark);

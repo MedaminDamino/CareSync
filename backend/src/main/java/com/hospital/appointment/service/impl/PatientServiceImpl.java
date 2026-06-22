@@ -102,4 +102,26 @@ public class PatientServiceImpl implements PatientService {
         
         patientRepository.delete(patient);
     }
+
+    @Override
+    public List<PatientDTO> getPatients(Boolean verified) {
+        List<Patient> patients;
+        if (verified != null) {
+            patients = patientRepository.findByVerified(verified);
+        } else {
+            patients = patientRepository.findAll();
+        }
+        return patients.stream()
+                .map(PatientMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public PatientDTO verifyPatient(Long id, boolean verified) {
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
+        patient.setVerified(verified);
+        return PatientMapper.toDTO(patientRepository.save(patient));
+    }
 }

@@ -31,4 +31,8 @@ public class Doctor {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean verified = false;
 }

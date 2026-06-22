@@ -131,22 +131,4 @@ export class AppointmentListComponent implements OnInit {
     });
   }
 
-  deleteAppointment(id: number): void {
-    this.confirmationService.confirm({
-      message: 'Are you sure you want to delete this appointment from history?',
-      header: 'Delete Appointment Record',
-      icon: 'pi pi-trash',
-      accept: () => {
-        this.appointmentService.delete(id).subscribe({
-          next: () => {
-            this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Appointment record deleted successfully!' });
-            this.loadAppointments();
-          },
-          error: (err) => {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: err?.message || 'Failed to delete appointment' });
-          }
-        });
-      }
-    });
-  }
 }

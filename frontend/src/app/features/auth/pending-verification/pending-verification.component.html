@@ -1,0 +1,34 @@
+<div class="auth-layout fade-in-up">
+  <div class="auth-sidebar">
+    <div style="z-index: 1;">
+      <i class="pi pi-heart-fill text-6xl mb-4 text-white"></i>
+      <h1 class="text-5xl font-outfit font-bold mb-3 mt-0">CareSync</h1>
+      <p class="text-xl line-height-3 text-white-alpha-80 max-w-20rem">
+        The modern hospital management platform designed for healthcare professionals and patients.
+      </p>
+    </div>
+  </div>
+  
+  <div class="auth-content">
+    <div class="auth-card text-center flex flex-column align-items-center justify-content-center">
+      <div class="logo-container bg-warning-light text-warning mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-lg);">
+        <i class="pi pi-clock text-2xl"></i>
+      </div>
+      <h2 class="auth-title mb-2">Pending Acceptance</h2>
+      <p class="auth-subtitle mb-4">Your registration was successful!</p>
+      
+      <div class="p-3 bg-warning-light border-round-lg mb-4 text-left border-1" style="border: 1px solid var(--warning-color); border-radius: var(--radius-lg);">
+        <p class="text-sm line-height-3 text-main m-0">
+          Your account has been created and is currently <strong>under review</strong> by our administrators. 
+          Certain features will be restricted until your profile is accepted.
+        </p>
+      </div>
+
+      <p class="text-muted text-sm mb-4">
+        You can log in to check your acceptance status, but you won't be able to book appointments or manage patient records until approved.
+      </p>
+      
+      <p-button label="Back to Login" routerLink="/login" styleClass="p-button-primary w-full" size="large"></p-button>
+    </div>
+  </div>
+</div>

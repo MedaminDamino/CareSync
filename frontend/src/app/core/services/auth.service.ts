@@ -28,11 +28,7 @@ export class AuthService {
 
   login(credentials: any): Observable<any> {
     return this.http.post<any>(`${API_URL}/auth/login`, credentials).pipe(
-      tap(response => {
-        this.tokenStorage.saveToken(response.token);
-        this.tokenStorage.saveUser(response);
-        this.currentUserSubject.next(response);
-      })
+      tap(response => this.saveSession(response))
     );
   }
 
@@ -43,6 +39,17 @@ export class AuthService {
   logout(): void {
     this.tokenStorage.signOut();
     this.currentUserSubject.next(null);
+  }
+
+  saveSession(response: any): void {
+    this.tokenStorage.saveToken(response.token);
+    this.tokenStorage.saveUser(response);
+    this.currentUserSubject.next(response);
+  }
+
+  updateCurrentUser(user: any): void {
+    this.tokenStorage.saveUser(user);
+    this.currentUserSubject.next(user);
   }
 
   isLoggedIn(): boolean {

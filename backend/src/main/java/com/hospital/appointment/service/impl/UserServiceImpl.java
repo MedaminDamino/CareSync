@@ -21,10 +21,35 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private com.hospital.appointment.repository.DoctorRepository doctorRepository;
+
+    @Autowired
+    private com.hospital.appointment.repository.PatientRepository patientRepository;
+
+    private boolean isUserVerified(User user) {
+        if (user.getRole() == com.hospital.appointment.enums.Role.ADMIN) {
+            return true;
+        } else if (user.getRole() == com.hospital.appointment.enums.Role.DOCTOR) {
+            return doctorRepository.findByUserId(user.getId())
+                    .map(com.hospital.appointment.entity.Doctor::isVerified)
+                    .orElse(false);
+        } else if (user.getRole() == com.hospital.appointment.enums.Role.PATIENT) {
+            return patientRepository.findByUserId(user.getId())
+                    .map(com.hospital.appointment.entity.Patient::isVerified)
+                    .orElse(false);
+        }
+        return false;
+    }
+
     @Override
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(UserMapper::toDTO)
+                .map(user -> {
+                    UserDTO dto = UserMapper.toDTO(user);
+                    dto.setVerified(isUserVerified(user));
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -32,14 +57,18 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
-        return UserMapper.toDTO(user);
+        UserDTO dto = UserMapper.toDTO(user);
+        dto.setVerified(isUserVerified(user));
+        return dto;
     }
 
     @Override
     public UserDTO getUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
-        return UserMapper.toDTO(user);
+        UserDTO dto = UserMapper.toDTO(user);
+        dto.setVerified(isUserVerified(user));
+        return dto;
     }
 
     @Override

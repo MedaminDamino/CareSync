@@ -20,5 +20,6 @@ public class UserDTO {
     private String blockReason;
     private LocalDateTime blockedAt;
     private Long blockedBy;
+    private boolean verified;
 }
 

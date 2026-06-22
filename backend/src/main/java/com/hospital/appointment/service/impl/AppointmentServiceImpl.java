@@ -6,6 +6,7 @@ import com.hospital.appointment.entity.Doctor;
 import com.hospital.appointment.entity.Patient;
 import com.hospital.appointment.entity.User;
 import com.hospital.appointment.enums.AppointmentStatus;
+import com.hospital.appointment.enums.Role;
 import com.hospital.appointment.exception.BadRequestException;
 import com.hospital.appointment.exception.ResourceNotFoundException;
 import com.hospital.appointment.mapper.AppointmentMapper;
@@ -110,6 +111,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         Patient patient = patientRepository.findById(appointmentDTO.getPatientId())
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + appointmentDTO.getPatientId()));
 
+        if (!patient.isVerified()) {
+            throw new BadRequestException("Patient account must be verified to book an appointment!");
+        }
+
         if (appointmentDTO.getAppointmentDate().isBefore(LocalDateTime.now())) {
             throw new BadRequestException("Appointment date cannot be in the past!");
         }
@@ -146,6 +151,20 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found."));
+
+        if (currentUser.getRole() == Role.DOCTOR) {
+            Doctor doctor = doctorRepository.findByUserId(currentUser.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Doctor profile not found."));
+            if (!doctor.isVerified()) {
+                throw new BadRequestException("Doctor account must be verified to manage appointments!");
+            }
+        } else if (currentUser.getRole() == Role.PATIENT) {
+            Patient patient = patientRepository.findByUserId(currentUser.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Patient profile not found."));
+            if (!patient.isVerified()) {
+                throw new BadRequestException("Patient account must be verified to manage appointments!");
+            }
+        }
 
         // Enforce transition logic via Strategy Pattern
         AppointmentStatusStrategy strategy = statusStrategies.stream()

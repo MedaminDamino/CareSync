@@ -23,6 +23,7 @@ export class MyAppointmentsComponent implements OnInit {
   loading = true;
   patientId!: number;
   selectedStatus = 'ALL';
+  isVerified = true;
 
   statusOptions = [
     { label: 'All Statuses', value: 'ALL' },
@@ -44,6 +45,7 @@ export class MyAppointmentsComponent implements OnInit {
     const user = this.authService.currentUserValue;
     if (user && user.profileId) {
       this.patientId = user.profileId;
+      this.isVerified = user.verified ?? true;
       this.loadAppointments();
     } else {
       this.loading = false;
@@ -95,6 +97,14 @@ export class MyAppointmentsComponent implements OnInit {
   }
 
   cancelAppointment(id: number): void {
+    if (!this.isVerified) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Verification Required',
+        detail: 'Your account must be verified before cancelling appointments.'
+      });
+      return;
+    }
     this.confirmationService.confirm({
       message: 'Are you sure you want to cancel this appointment?',
       header: 'Cancel Appointment',

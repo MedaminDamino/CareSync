@@ -120,4 +120,30 @@ public class DoctorServiceImpl implements DoctorService {
         
         doctorRepository.delete(doctor);
     }
+
+    @Override
+    public List<DoctorDTO> getDoctors(Long specialityId, Boolean verified) {
+        List<Doctor> doctors;
+        if (specialityId != null && verified != null) {
+            doctors = doctorRepository.findBySpecialityIdAndVerified(specialityId, verified);
+        } else if (specialityId != null) {
+            doctors = doctorRepository.findBySpecialityId(specialityId);
+        } else if (verified != null) {
+            doctors = doctorRepository.findByVerified(verified);
+        } else {
+            doctors = doctorRepository.findAll();
+        }
+        return doctors.stream()
+                .map(DoctorMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public DoctorDTO verifyDoctor(Long id, boolean verified) {
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
+        doctor.setVerified(verified);
+        return DoctorMapper.toDTO(doctorRepository.save(doctor));
+    }
 }
