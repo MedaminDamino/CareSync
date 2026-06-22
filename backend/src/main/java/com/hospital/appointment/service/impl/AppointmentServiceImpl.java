@@ -42,31 +42,62 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Autowired
     private List<AppointmentStatusStrategy> statusStrategies;
 
+    private void checkAndCancelPastAppointments(List<Appointment> appointments) {
+        LocalDateTime now = LocalDateTime.now();
+        for (Appointment app : appointments) {
+            if (app.getAppointmentDate().isBefore(now)
+                    && app.getStatus() != AppointmentStatus.COMPLETED
+                    && app.getStatus() != AppointmentStatus.CANCELLED
+                    && app.getStatus() != AppointmentStatus.REJECTED) {
+                app.setStatus(AppointmentStatus.CANCELLED);
+                appointmentRepository.save(app);
+            }
+        }
+    }
+
     @Override
+    @Transactional
     public List<AppointmentDTO> getAllAppointments() {
-        return appointmentRepository.findAll().stream()
+        List<Appointment> appointments = appointmentRepository.findAll();
+        checkAndCancelPastAppointments(appointments);
+        return appointments.stream()
                 .map(AppointmentMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public List<AppointmentDTO> getAppointmentsByDoctor(Long doctorId) {
-        return appointmentRepository.findByDoctorId(doctorId).stream()
+        List<Appointment> appointments = appointmentRepository.findByDoctorId(doctorId);
+        checkAndCancelPastAppointments(appointments);
+        return appointments.stream()
                 .map(AppointmentMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public List<AppointmentDTO> getAppointmentsByPatient(Long patientId) {
-        return appointmentRepository.findByPatientId(patientId).stream()
+        List<Appointment> appointments = appointmentRepository.findByPatientId(patientId);
+        checkAndCancelPastAppointments(appointments);
+        return appointments.stream()
                 .map(AppointmentMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public AppointmentDTO getAppointmentById(Long id) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + id));
+        LocalDateTime now = LocalDateTime.now();
+        if (appointment.getAppointmentDate().isBefore(now)
+                && appointment.getStatus() != AppointmentStatus.COMPLETED
+                && appointment.getStatus() != AppointmentStatus.CANCELLED
+                && appointment.getStatus() != AppointmentStatus.REJECTED) {
+            appointment.setStatus(AppointmentStatus.CANCELLED);
+            appointment = appointmentRepository.save(appointment);
+        }
         return AppointmentMapper.toDTO(appointment);
     }
 

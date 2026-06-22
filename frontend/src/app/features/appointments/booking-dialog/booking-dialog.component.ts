@@ -201,10 +201,11 @@ export class BookingDialogComponent implements OnInit {
   bookingForm!: FormGroup;
   loading = false;
   today = new Date();
-  timeSlots: string[] = [
+  allTimeSlots: string[] = [
     '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
     '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00'
   ];
+  timeSlots: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -214,11 +215,75 @@ export class BookingDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.today = this.getMinDate();
     this.bookingForm = this.fb.group({
       date: [null, Validators.required],
       time: ['', Validators.required],
       reason: ['', [Validators.required, Validators.minLength(5)]]
     });
+
+    this.bookingForm.get('date')?.valueChanges.subscribe(date => {
+      this.updateTimeSlots(date);
+    });
+
+    this.updateTimeSlots(null);
+  }
+
+  getMinDate(): Date {
+    const now = new Date();
+    const lastSlot = this.allTimeSlots[this.allTimeSlots.length - 1]; // "16:00"
+    const [lastHour, lastMinute] = lastSlot.split(':').map(Number);
+    
+    const lastSlotToday = new Date(now);
+    lastSlotToday.setHours(lastHour, lastMinute, 0, 0);
+
+    if (now >= lastSlotToday) {
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      return tomorrow;
+    }
+    return now;
+  }
+
+  updateTimeSlots(date: Date | null): void {
+    if (!date) {
+      this.timeSlots = [];
+      return;
+    }
+
+    const selectedDate = new Date(date);
+    const todayDate = new Date();
+
+    const isToday = selectedDate.getFullYear() === todayDate.getFullYear() &&
+                    selectedDate.getMonth() === todayDate.getMonth() &&
+                    selectedDate.getDate() === todayDate.getDate();
+
+    if (isToday) {
+      const currentHour = todayDate.getHours();
+      const currentMinute = todayDate.getMinutes();
+
+      this.timeSlots = this.allTimeSlots.filter(slot => {
+        const [slotHour, slotMinute] = slot.split(':').map(Number);
+        if (slotHour > currentHour) {
+          return true;
+        }
+        if (slotHour === currentHour && slotMinute > currentMinute) {
+          return true;
+        }
+        return false;
+      });
+    } else {
+      this.timeSlots = [...this.allTimeSlots];
+    }
+
+    // If the currently selected time slot is no longer valid, reset it
+    const currentTimeControl = this.bookingForm.get('time');
+    if (currentTimeControl && currentTimeControl.value) {
+      if (!this.timeSlots.includes(currentTimeControl.value)) {
+        currentTimeControl.setValue('');
+      }
+    }
   }
 
   onClose(): void {

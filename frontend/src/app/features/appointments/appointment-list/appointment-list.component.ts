@@ -26,8 +26,7 @@ import { ActionToolbarComponent } from '../../../shared/components/action-toolba
     ActionToolbarComponent
   ],
   templateUrl: './appointment-list.component.html',
-  styleUrls: ['./appointment-list.component.css'],
-  providers: [MessageService, ConfirmationService]
+  styleUrls: ['./appointment-list.component.css']
 })
 export class AppointmentListComponent implements OnInit {
   appointments: any[] = [];

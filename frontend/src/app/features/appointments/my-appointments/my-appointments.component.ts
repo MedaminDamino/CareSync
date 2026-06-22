@@ -15,8 +15,7 @@ import { StatusTagComponent } from '../../../shared/components/status-tag/status
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, SharedPrimeNgModule, PageHeaderComponent, EmptyStateComponent, StatusTagComponent],
   templateUrl: './my-appointments.component.html',
-  styleUrls: ['./my-appointments.component.css'],
-  providers: [MessageService, ConfirmationService]
+  styleUrls: ['./my-appointments.component.css']
 })
 export class MyAppointmentsComponent implements OnInit {
   appointments: any[] = [];
